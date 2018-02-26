@@ -99,3 +99,8 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+#Ignore all dataset images:
+./week1/results/groundtruth/*
+./week1/results/highway/*
+./week1/results/kitti/*
