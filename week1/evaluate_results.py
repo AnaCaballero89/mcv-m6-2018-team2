@@ -3,24 +3,22 @@ import os
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-files_ids = list(range(1201, 1401))
-
 results_path = './results/highway'
 gt_path = './results/groundtruth'
-method = 'B' #A or B
-total_num_pixels = 320 * 240 * len(files_ids) #Images are 320x240
-labels = [0, 50, 85, 170, 255]
+method = 'A' #A or B
+labels = [0, 255]
+files_ids = list(range(1201, 1401))
 fp = 0
 fn = 0
 tp = 0
 tn = 0
+
+
 def evaluate_sample(prediction, groundtruth):
     prediction = cv2.imread(prediction, 0).flatten()
-    prediction =[pred * 255 for pred in prediction]
+    prediction = [pred * 255 for pred in prediction]
     groundtruth = cv2.imread(groundtruth, 0).flatten()
+    groundtruth = [0 if x < 255 else x for x in groundtruth]
     #print(list(set(prediction)))
     #print(list(set(groundtruth)))
     conf_mat = confusion_matrix(groundtruth, prediction, labels=labels)
@@ -44,6 +42,6 @@ for id in files_ids:
     tn += TN.sum()
 
 precision = tp / (tp + fp)
-recall = tp / (tp+ fn)
+recall = tp / (tp + fn)
 fscore = 2 * precision * recall / (precision + recall)
 print('Precision: {}  Recall: {}  F-Score: {}'.format(precision, recall, fscore))
