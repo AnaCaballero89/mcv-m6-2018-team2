@@ -22,10 +22,16 @@ def evaluate_sample(prediction, groundtruth):
     #print(list(set(prediction)))
     #print(list(set(groundtruth)))
     conf_mat = confusion_matrix(groundtruth, prediction, labels=labels)
-    FP = conf_mat.sum(axis=0) - np.diag(conf_mat)
-    FN = conf_mat.sum(axis=1) - np.diag(conf_mat)
-    TP = np.diag(conf_mat)
-    TN = conf_mat.sum() - (FP + FN + TP)
+    if len(labels) is 2:
+        FP = conf_mat[0, 1]
+        FN = conf_mat[1, 0]
+        TP = conf_mat[1, 1]
+        TN = conf_mat[0, 0]
+    else:
+        FP = conf_mat.sum(axis=0) - np.diag(conf_mat)
+        FN = conf_mat.sum(axis=1) - np.diag(conf_mat)
+        TP = np.diag(conf_mat)
+        TN = conf_mat.sum() - (FP + FN + TP)
     return FP, FN, TP, TN
 
 
