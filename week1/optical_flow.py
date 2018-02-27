@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 
-def msen(opticalflowResults, opticalflowGT):
+def msen(opticalflowResults, opticalflowGT, original):
     # opticalflowResults: Results from our optical flow calculation
     # opticalflowGT: Results of the optical flow from the ground truth.
 
@@ -14,6 +14,7 @@ def msen(opticalflowResults, opticalflowGT):
 
     results = cv2.imread(opticalflowResults, -1)
     opticalflow = cv2.imread(opticalflowGT, -1)
+    original_image = cv2.imread(original, -1)
 
     # flow_u(u, v) = ((float)I(u, v, 1) - 2 ^ 15) / 64.0;
     # flow_v(u, v) = ((float) I(u, v, 2) - 2 ^ 15) / 64.0;
@@ -63,6 +64,9 @@ def msen(opticalflowResults, opticalflowGT):
 
     representation_OF(error)
 
+
+    colormap_OF(image_validated,original_image)
+
 def representation_OF(error):
     num_bins = 100
     n, bins, patches = plt.hist(error, num_bins, normed=1, facecolor='blue')
@@ -71,12 +75,22 @@ def representation_OF(error):
     plt.title(r'Histogram of errors')
     plt.show()
 
+def colormap_OF(error_vector,originalimage):
+    r, c= originalimage.shape
+    error_map = np.reshape(error_vector, (r, c))
+
+    plt.imshow(error_map)
+    plt.colorbar()
+    plt.show()
+
 
 
 if __name__ == "__main__":
     results_1 = '/home/guillem/results_opticalflow_kitti/results/LKflow_000045_10.png'
     groundtruth_1 = '/home/guillem/data_stereo_flow/training/flow_noc/000045_10.png'
+    original_1 = '/home/guillem/data_stereo_flow/training/image_0/000045_10.png'
     results_2 = '/home/guillem/results_opticalflow_kitti/results/LKflow_000157_10.png'
     groundtruth_2 = '/home/guillem/data_stereo_flow/training/flow_noc/000157_10.png'
-    msen(results_1, groundtruth_1)
-    msen(results_2, groundtruth_2)
+    original_2 = '/home/guillem/data_stereo_flow/training/image_0/000157_10.png'
+    msen(results_1, groundtruth_1, original_1)
+    msen(results_2, groundtruth_2, original_2)
