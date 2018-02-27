@@ -19,10 +19,13 @@ x, y = np.meshgrid(np.arange(0, c1, 1), np.arange(0, c2, 1))
 results_u1 = results[:, :, 1].flatten().astype(np.float)
 results_v1 = results[:, :, 2].flatten().astype(np.float)
 results_validation = results[:, :, 0].flatten()
-results_u = [(pred - math.pow(2, 15)) / 64.0 for pred in results_u1]
-results_v = [(pred - math.pow(2, 15)) / 64.0 for pred in results_v1]
+results_u = [((pred - math.pow(2, 15)) / 64.0)/200.0 for pred in results_u1]
+results_v = [((pred - math.pow(2, 15)) / 64.0)/200.0 for pred in results_v1]
+for i in range(len(results_validation)):
+    results_u[i] = results_u[i] * results_validation[i]
+    results_v[i] = results_v[i] * results_validation[i]
 u = np.reshape(results_u, (c1, c2))
 v = np.reshape(results_v, (c1, c2))
 plt.figure()
-plt.quiver(x, y, u, v, units='inches', scale=1, hatch=' ', alpha = 0.3, linewidth = 0.01)
+plt.quiver(x, y, u, v, units='inches', linewidth = 0.01)
 plt.savefig('of_rep.png')
