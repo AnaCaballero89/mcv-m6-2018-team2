@@ -70,6 +70,7 @@ def msen(opticalflowResults, opticalflowGT, original):
 def representation_OF(error):
     num_bins = 100
     n, bins, patches = plt.hist(error, num_bins, normed=1, facecolor='blue')
+    plt.axvline(3, color = 'r', linestyle = '--')
     plt.xlabel('Mean Square Error in Non-Occluded areas')
     plt.ylabel('Percentage of errors')
     plt.title(r'Histogram of errors')
