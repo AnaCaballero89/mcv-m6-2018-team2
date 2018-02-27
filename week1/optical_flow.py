@@ -26,13 +26,6 @@ def msen(opticalflowResults, opticalflowGT):
     results_u = [(pred - math.pow(2, 15)) / 64.0 for pred in results_u1]
     results_v = [(pred - math.pow(2, 15)) / 64.0 for pred in results_v1]
 
-    for i in range(len(results_validation)):
-        results_u[i] = results_u[i] * results_validation[i]
-        results_v[i] = results_v[i] * results_validation[i]
-
-
-
-
     groundtruth_u1 = opticalflow[:, :, 1].flatten().astype(np.float)
     groundtruth_v1 = opticalflow[:, :, 2].flatten().astype(np.float)
     groundtruth_validation = opticalflow[:, :, 0].flatten()
@@ -40,31 +33,35 @@ def msen(opticalflowResults, opticalflowGT):
     groundtruth_u = [(gt - math.pow(2, 15)) / 64.0 for gt in groundtruth_u1]
     groundtruth_v = [(gt - math.pow(2, 15)) / 64.0 for gt in groundtruth_v1]
 
-    for i in range(len(groundtruth_validation)):
-        groundtruth_u[i] = groundtruth_u[i] * groundtruth_validation[i]
-        groundtruth_v[i] = groundtruth_v[i] * groundtruth_validation[i]
-
 
     #error = [gt - pred for gt, pred in zip(opticalflow, results)]
 
     error = np.zeros(len(groundtruth_u))
+    error = []
+    image_validated = []
+    correct_map = []
     for i in range(len(groundtruth_u)):
-        error[i] = math.sqrt(math.pow((groundtruth_u[i] - results_u[i]), 2) + math.pow((groundtruth_v[i] - results_v[i]), 2))
+        if groundtruth_validation[i] == 0:
+            image_validated.append(0)
+            continue
+        else:
+            errorpixels = math.sqrt(math.pow((groundtruth_u[i] - results_u[i]), 2) + math.pow((groundtruth_v[i] - results_v[i]), 2))
+            error.append(errorpixels)
+            image_validated.append(errorpixels)
+
+        if errorpixels > 3:
+            correct_map.append(0)
+        else:
+            correct_map.append(1)
+
+    pepn = (1 - sum(correct_map)/(float)(sum(groundtruth_validation))) * 100
+    mse = (1 / len(error)) * sum(error)
 
 
-    #mse = [x**2 for x in error]
-    total_mse = (1/len(error)) * sum(error)
-
-    print('Mean square error in Non-Occluded areas: {} '.format(total_mse))
-
-    for e in error:
-        if e > 3:
-            error_count += 1
-
-    pepn = 100 * (error_count / sum(groundtruth_validation))
+    print('Mean square error in Non-Occluded areas: {} '.format(mse))
     print('Percentage of Erroneous Pixels in Non-Occluded areas: {} % '.format(pepn))
 
-    representation_OF(abs(error))
+    representation_OF(error)
 
 def representation_OF(error):
     num_bins = 100
