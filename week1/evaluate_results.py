@@ -5,20 +5,20 @@ from sklearn.metrics import confusion_matrix
 
 results_path = './results/highway'
 gt_path = './results/groundtruth'
-method = 'A' #A or B
+method = 'B' #A or B
 labels = [0, 255]
 files_ids = list(range(1201, 1401))
 fp = 0
 fn = 0
 tp = 0
 tn = 0
-
+gt_thresh = 170
 
 def evaluate_sample(prediction, groundtruth):
     prediction = cv2.imread(prediction, 0).flatten()
     prediction = [pred * 255 for pred in prediction]
     groundtruth = cv2.imread(groundtruth, 0).flatten()
-    groundtruth = [0 if x < 255 else x for x in groundtruth]
+    groundtruth = [0 if x < gt_thresh else 255 for x in groundtruth]
     #print(list(set(prediction)))
     #print(list(set(groundtruth)))
     conf_mat = confusion_matrix(groundtruth, prediction, labels=labels)
@@ -42,12 +42,12 @@ for id in files_ids:
     gt_file = os.path.join(gt_path, gt_filename)
     print('Analyzing image {}'.format(result_file))
     FP, FN, TP, TN = evaluate_sample(result_file, gt_file)
-    fp += FP.sum()
-    fn += FN.sum()
-    tp += TP.sum()
-    tn += TN.sum()
+    fp += FP
+    fn += FN
+    tp += TP
+    tn += TN
 
-precision = tp / (tp + fp)
-recall = tp / (tp + fn)
+precision = tp / float(tp + fp)
+recall = tp / float(tp + fn)
 fscore = 2 * precision * recall / (precision + recall)
 print('Precision: {}  Recall: {}  F-Score: {}'.format(precision, recall, fscore))
