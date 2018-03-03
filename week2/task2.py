@@ -79,14 +79,12 @@ def training(path_test, first_frame, last_frame):
     # Compute mean matrix using numpy function
     mean_matrix = np.mean(accumulator, axis=2)
     mean_matrix = cv2.convertScaleAbs(mean_matrix)
-    cv2.imshow("mean matrix", mean_matrix)
-    cv2.waitKey(0) 
+    cv2.imwrite("std-mean-images/"+str(path_test.split("/")[1])+"_mean.png", mean_matrix)
 
     # Compute standard deviation matrix using numpy function
     std_matrix = np.std(accumulator, axis=2)
     std_matrix = cv2.convertScaleAbs(std_matrix)
-    cv2.imshow("std matrix", std_matrix)
-    cv2.waitKey(0)  
+    cv2.imwrite("std-mean-images/"+str(path_test.split("/")[1])+"_std.png", std_matrix)
 
     return mean_matrix, std_matrix
   
@@ -122,12 +120,12 @@ if __name__ == "__main__":
     # Second 50% left backgrounds adapts
 
     mean_matrix, std_matrix = training(highway_path, 1050, 1199);
-    adapts(highway_path, 1199, 1350, mean_matrix, std_matrix, highway_alhpa, highway_rho);
+    # adapts(highway_path, 1199, 1350, mean_matrix, std_matrix, highway_alhpa, highway_rho);
 
-    # mu, sigma = training(fall_path, 1460, 1509);
+    mu, sigma = training(fall_path, 1460, 1509);
     # adapts(fall_path, 1509, 1560, mu, sigma, highway_alhpa, highway_rho);
     
-    # mu, sigma = training(traffic_path, 950, 999);
+    mu, sigma = training(traffic_path, 950, 999);
     # adapts(traffic_path, 999, 1050, mu, sigma, highway_alhpa, highway_rho);
 
 
