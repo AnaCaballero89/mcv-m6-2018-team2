@@ -37,11 +37,11 @@ def get_accumulator(path_test):
     return accumulator
 
 
-def gaussian(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha, rho):
+def gaussian(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha):
 
     """
-    Description: background adapts
-    Input: path_test, first_frame, last_frame,  mean_matrix, std_matrix, alpha, rho
+    Description: gaussian 
+    Input: path_test, first_frame, last_frame,  mean_matrix, std_matrix, alpha
     Output: None
     """
 

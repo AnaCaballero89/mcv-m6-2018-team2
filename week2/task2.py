@@ -10,10 +10,6 @@ import numpy as np
 from train import *
 from adaptive import *
 
-# Path to save images and videos
-images_path = "std-mean-images/"
-video_path = "background-subtraction-videos/"
-
 # Highway sequences configuration, range 1050 - 1350
 highway_path = "datasets/highway/input/"	
 highway_alpha = 2.5
