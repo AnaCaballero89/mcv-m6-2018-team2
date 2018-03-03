@@ -30,12 +30,12 @@ def evaluate_sample(mask, gt):
     FN = np.sum(np.logical_and(mask == 0, gt == 1))
 
     # Precision (P) 
-    if float(np.count_nonzero(mask)) != 0.0:
+    if float(TP + FP) != 0.0:
             P = TP / float(TP + FP)
     else:  
         P = 0
     # Recall (R)
-    if float(np.count_nonzero(gt)) != 0.0:
+    if float(TP + FN) != 0.0:
          R = TP / float(TP + FN)
     else: 
         R = 0
