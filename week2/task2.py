@@ -125,7 +125,7 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
     """
     Description: background adapts
     Input: path_test, first_frame, last_frame,  mean_matrix, std_matrix, alpha, rho
-    Output: mu and sigma matrices
+    Output: None
     """
 
     # Initialize index to accumulate images
@@ -179,8 +179,6 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
             # Scales, calculates absolute values, and converts the result to 8-bit
             sigma_matrix = cv2.convertScaleAbs(sigma_matrix)
 
-    return mu_matrix, sigma_matrix
-
 
 if __name__ == "__main__":
 
@@ -189,12 +187,12 @@ if __name__ == "__main__":
     # Second 50% left backgrounds adapts
 
     mu_matrix, sigma_matrix = training(highway_path, 1050, 1199, highway_alpha);
-    mu_matrix, sigma_matrix = adaptive(highway_path, 1200, 1349, mu_matrix, sigma_matrix, highway_alpha, highway_rho); 
+    adaptive(highway_path, 1200, 1349, mu_matrix, sigma_matrix, highway_alpha, highway_rho); 
 
     mu_matrix, sigma_matrix = training(fall_path, 1460, 1509, fall_alpha);
-    mu_matrix, sigma_matrix = adaptive(fall_path, 1510, 1559, mu_matrix, sigma_matrix, fall_alpha, fall_rho);   
+    adaptive(fall_path, 1510, 1559, mu_matrix, sigma_matrix, fall_alpha, fall_rho);   
 
     mu_matrix, sigma_matrix = training(traffic_path, 950, 999, traffic_alpha);
-    mu_matrix, sigma_matrix = adaptive(traffic_path, 1000, 1049, mu_matrix, sigma_matrix, traffic_alpha, traffic_rho);
+    adaptive(traffic_path, 1000, 1049, mu_matrix, sigma_matrix, traffic_alpha, traffic_rho);
    
 
