@@ -95,7 +95,7 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
             ret, gt = cv2.threshold(gt, UNKNOW_MOTION, 255, cv2.THRESH_BINARY) 
 
             # Evaluate results
-            TP, FP, TN, FN, P, R, F1 = evaluate_sample(frame, gt)
+            TP, FP, TN, FN, P, R, F1 = evaluate_sample(background, gt)
 
             # Accumulate metrics
             AccTP = AccTP + TP
