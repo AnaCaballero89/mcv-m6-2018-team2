@@ -8,6 +8,10 @@ import math
 import cv2
 import numpy as np
 
+# Path to save images and videos
+images_path = "std-mean-images/"
+video_path = "background-subtraction-videos/"
+
 # Highway sequences configuration, range 1050 - 1350
 highway_path = "datasets/highway/input/"	
 highway_alpha = 2.5
@@ -79,16 +83,16 @@ def training(path_test, first_frame, last_frame, alpha):
     # Compute mean matrix using numpy function
     mean_matrix = np.mean(accumulator, axis=2)
     mean_matrix = cv2.convertScaleAbs(mean_matrix)
-    cv2.imwrite("std-mean-images/"+str(path_test.split("/")[1])+"_training_mean.png", mean_matrix)
+    cv2.imwrite(images_path+str(path_test.split("/")[1])+"_training_mean.png", mean_matrix)
 
     # Compute standard deviation matrix using numpy function
     std_matrix = np.std(accumulator, axis=2)
     std_matrix = cv2.convertScaleAbs(std_matrix)
-    cv2.imwrite("std-mean-images/"+str(path_test.split("/")[1])+"_training_std.png", std_matrix)
+    cv2.imwrite(images_path+str(path_test.split("/")[1])+"_training_std.png", std_matrix)
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter("background-subtraction-videos/training_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (accumulator.shape[1], accumulator.shape[0]))
+    out = cv2.VideoWriter(video_path+"training_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (accumulator.shape[1], accumulator.shape[0]))
 
     # Read sequence of images sorted to write video
     for filename in sorted(os.listdir(path_test)):
@@ -129,7 +133,7 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter("background-subtraction-videos/adaptive_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
+    out = cv2.VideoWriter(video_path+"adaptive_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Read sequence of images sorted
     for filename in sorted(os.listdir(path_test)):
