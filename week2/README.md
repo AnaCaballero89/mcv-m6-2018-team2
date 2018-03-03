@@ -1,5 +1,7 @@
 # Week 2 Background estimation, Stauffer & Grimson
 
+Tasks:
+
 - [ ] Task 1.1: Gaussian distribution
 - [ ] task 1.2 & 1.3: Evaluate results
 - [x] Task 2.1: Recursive Gaussian modelling
