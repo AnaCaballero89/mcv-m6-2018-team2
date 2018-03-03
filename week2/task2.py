@@ -92,7 +92,7 @@ def training(path_test, first_frame, last_frame, alpha):
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(video_path+"training_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (accumulator.shape[1], accumulator.shape[0]))
+    out = cv2.VideoWriter(video_path+"non-adaptive_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (accumulator.shape[1], accumulator.shape[0]))
 
     # Read sequence of images sorted to write video
     for filename in sorted(os.listdir(path_test)):
