@@ -68,7 +68,7 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(video_path+"gaussian_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
+    out = cv2.VideoWriter(video_path+"gaussian_alpha"+str(alpha)+"_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Read sequence of images sorted
     for filename in sorted(os.listdir(path_test)):
@@ -79,9 +79,8 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
 
             # Read image from groundtruth in grayscale
             frame = cv2.imread(path_test+filename, 0)
-
             # Compute pixels that belongs to background
-            background = abs(frame - mu_matrix) >= alpha*(sigma_matrix+2);
+            background = abs(frame - mu_matrix) >= alpha*(sigma_matrix+2)
             # Convert bool to int values
             background = background.astype(int)
             # Replace 1 by 255
@@ -90,9 +89,12 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
             background = cv2.convertScaleAbs(background)
 
             # Read groundtruth image
-            gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png", 0)
-            # Apply threshold on mask of correspondent test
-            ret, gt = cv2.threshold(gt, UNKNOW_MOTION, 255, cv2.THRESH_BINARY) 
+            gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png",0)
+            # Remember that we will use values as background 0 and 50, foreground 255, and unknow (not evaluated) 85 and 170
+            # Replace values acording previous assumption
+            gt[gt == HARD_SHADOW] = 0
+            gt[gt == OUTSIDE_REGION] = 0
+            gt[gt == UNKNOW_MOTION] = 0
 
             # Evaluate results
             TP, FP, TN, FN, P, R, F1 = evaluate_sample(background, gt)

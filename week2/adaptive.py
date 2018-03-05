@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 __author__  = "Master Computer Vision. Team 02"
-__license__ = "M6 Video Analysis"
+__license__ = "M6 Video Analysis. Task 1"
 
 # Import libraries
 import os
@@ -63,7 +63,7 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
             frame = cv2.imread(path_test+filename, 0)
 
             # Compute pixels that belongs to background
-            background = abs(frame - mu_matrix) >= alpha*(sigma_matrix+2);
+            background = abs(frame - mu_matrix) >= alpha*(sigma_matrix+2)
             # Convert bool to int values
             background = background.astype(int)
             # Replace 1 by 255

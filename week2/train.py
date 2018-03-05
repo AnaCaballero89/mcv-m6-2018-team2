@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 __author__  = "Master Computer Vision. Team 02"
-__license__ = "M6 Video Analysis"
+__license__ = "M6 Video Analysis. Task 1"
 
 # Import libraries
 import os
@@ -67,12 +67,10 @@ def training(path_test, first_frame, last_frame, alpha):
 
     # Compute mean matrix using numpy function
     mean_matrix = np.mean(accumulator, axis=2)
-    mean_matrix = cv2.convertScaleAbs(mean_matrix)
     cv2.imwrite(images_path+str(path_test.split("/")[1])+"_training_mean.png", mean_matrix)
 
     # Compute standard deviation matrix using numpy function
     std_matrix = np.std(accumulator, axis=2)
-    std_matrix = cv2.convertScaleAbs(std_matrix)
     cv2.imwrite(images_path+str(path_test.split("/")[1])+"_training_std.png", std_matrix)
 
     # Define the codec and create VideoWriter object

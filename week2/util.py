@@ -8,6 +8,54 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
 
+def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
+
+    """
+    Description: plot recall
+    Input: vec_R1, vec_R2, vec_R3, alphas
+    Output: None
+    """
+
+    plt.clf()
+    plt.title('Recall vs alpha')
+    plt.xlabel('Threshold') 
+    plt.ylabel('Recall')
+    plt.ylim([0, max(max(vec_R1),max(vec_R2),max(vec_R3))])
+    plt.xlim([0, max(alphas)])
+    plt.plot(vec_R1, 'r-')
+    plt.plot(vec_R2, 'b-')
+    plt.plot(vec_R3, 'g-')
+    red_patch = mpatches.Patch(color='red', label='highway')
+    blue_patch = mpatches.Patch(color='blue', label='fall')
+    green_patch = mpatches.Patch(color='green', label='traffic')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    plt.show()
+
+
+def plot_precision(vec_P1, vec_P2, vec_P3, alphas):
+
+    """
+    Description: plot precision
+    Input: vec_P1, vec_P2, vec_P3, alphas
+    Output: None
+    """
+
+    plt.clf()
+    plt.title('Precision vs alpha')
+    plt.xlabel('Threshold') 
+    plt.ylabel('Precision')
+    plt.ylim([0, max(max(vec_P1),max(vec_P2),max(vec_P3))])
+    plt.xlim([0, max(alphas)])
+    plt.plot(vec_P1, 'r-')
+    plt.plot(vec_P2, 'b-')
+    plt.plot(vec_P3, 'g-')
+    red_patch = mpatches.Patch(color='red', label='highway')
+    blue_patch = mpatches.Patch(color='blue', label='fall')
+    green_patch = mpatches.Patch(color='green', label='traffic')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    plt.show()
+
+
 def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
 
     """
@@ -16,10 +64,11 @@ def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
     Output: None
     """
 
+    plt.clf()
     plt.title('Evaluate metrics on '+name+' dataset')
     plt.xlabel('Threshold') 
     plt.ylabel('Number of pixels')
-    plt.ylim([0, max(FP)])
+    plt.ylim([0, max(max(FP), max(FN), max(TP), max(TN))])
     plt.xlim([0, max(alphas)])
     plt.plot(FP, '-')
     plt.plot(FN, '-')
@@ -32,74 +81,6 @@ def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
     plt.legend(handles=[red_patch, blue_patch, green_patch, orange_patch])
     plt.show()
 
-def plot_f1_threshold(FP, FN, TP, TN, alphas, name):
-    """
-    Description: plot f1 vs threshold
-    Input: FP, FN, TP, TN, alphas, name
-    Output: None
-    """
-    fscore = []
-    for i in range(len(alphas)):
-        precision = TP[i] / float(TP[i] + FP[i])
-        recall = TP[i] / float(TP[i] + FN[i])
-        fscore.append(2 * precision * recall / (precision + recall))
-
-    plt.title('F1 vs threshold metric '+name+' dataset')
-    plt.xlabel('Threshold')
-    plt.ylabel('F1')
-    plt.ylim([0, 1])
-    plt.xlim([0, max(alphas)])
-    plt.plot(fscore)
-    plt.show()
-
-
-
-
-def plot_precision_recall_f1(FP, FN, TP, TN, alphas, name):
-    fscore = []
-    prec = []
-    rec = []
-    for i in range(len(alphas)):
-        precision = TP[i] / float(TP[i] + FP[i])
-        recall = TP[i] / float(TP[i] + FN[i])
-        prec.append(precision)
-        rec.append(recall)
-        fscore.append(2 * precision * recall / (precision + recall))
-
-    plt.title('Precision, Recall and F1 metric '+name+' dataset')
-    plt.xlabel('Threshold')
-    plt.ylabel('Metric')
-    plt.ylim([0, 1])
-    plt.xlim([0, max(alphas)])
-    plt.plot(prec)
-    plt.plot(rec)
-    plt.plot(fscore)
-    red_patch = mpatches.Patch(color='orange', label='Precision')
-    blue_patch = mpatches.Patch(color='blue', label='Recall')
-    green_patch = mpatches.Patch(color='green', label='F1')
-    plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
-
-def plot_precision_recall(FP, FN, TP, TN, alphas, name):
-    prec = []
-    rec = []
-    for i in range(len(alphas)):
-        precision = TP[i] / float(TP[i] + FP[i])
-        recall = TP[i] / float(TP[i] + FN[i])
-        prec.append(precision)
-        rec.append(recall)
-    print("Precision:")
-    print(prec)
-    print("Recall")
-    print(rec)
-
-    plt.title('Precision and Recall metric ' + name + ' dataset')
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    plt.ylim([0, 1])
-    plt.xlim([0, 1])
-    plt.plot(rec, prec)
-    plt.show()
 
 def init_vectors():
 
@@ -113,11 +94,8 @@ def init_vectors():
     vec_FN = []
     vec_TP = []
     vec_TN = []
-    vec_P = []
-    vec_R = []
-    vec_F1 = []
 
-    return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1
+    return vec_FP, vec_FN, vec_TP, vec_TN,
 
 
 def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 __author__  = "Master Computer Vision. Team 02"
-__license__ = "M6 Video Analysis"
+__license__ = "M6 Video Analysis. Task 2"
 
 # Import libraries
 import os

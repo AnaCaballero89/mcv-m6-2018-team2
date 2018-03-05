@@ -5,6 +5,7 @@ __license__ = "M6 Video Analysis"
 # Import libraries
 import cv2
 import os
+from sklearn.metrics import confusion_matrix
 import numpy as np
 
 
@@ -20,14 +21,17 @@ def evaluate_sample(mask, gt):
     mask = mask.clip(max=1)
     gt = gt.clip(max=1)
 
-    # True Positive (TP)
-    TP = np.sum(np.logical_and(mask == 1, gt == 1))
-    # True Negative (TN)
-    TN = np.sum(np.logical_and(mask == 0, gt == 0))
-    # False Positive (FP)
-    FP = np.sum(np.logical_and(mask == 1, gt == 0))
-    # False Negative (FN)
-    FN = np.sum(np.logical_and(mask == 0, gt == 1))
+    # Compute confusion matrix to evaluate the accuracy of a classification   
+    # Check that there more than one unique value to classify samples
+    # Confusion matrix need more than 1 value to unpack function 
+    # If there are one unique value, all values on sample correspond to background (0)
+    if((len(np.unique(gt)) == 1) and (len(np.unique(mask)) == 1)):
+        TN = 0
+        FP = 0
+        FN = 0
+        TP = 0
+    else:
+        TN, FP, FN, TP = confusion_matrix(gt.flatten(), mask.flatten()).ravel()
 
     # Precision (P) 
     if float(TP + FP) != 0.0:
