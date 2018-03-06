@@ -6,6 +6,7 @@ __license__ = "M6 Video Analysis"
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from sklearn import metrics
 
 
 def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
@@ -81,6 +82,55 @@ def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
     plt.legend(handles=[red_patch, blue_patch, green_patch, orange_patch])
     plt.show()
 
+def plot_PR_REC(rec, prec):
+    plt.clf()
+    plt.title('Precision and recall curve')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.ylim([0, 1])
+    plt.xlim([0, 1])
+    plt.plot(rec, prec)
+    plt.show()
+
+def plot_metrics_alpha(prec,rec,f1, alphas, name):
+
+    """
+    Description: plot graph
+    Input: FP, FN, TP, TN
+    Output: None
+    """
+
+    plt.clf()
+    plt.title('Metrics on '+name+' dataset')
+    plt.xlabel('Threshold')
+    plt.ylabel('Value')
+    plt.ylim([0, 1])
+    plt.xlim([0, max(alphas)])
+    plt.plot(prec, '-')
+    plt.plot(rec, '-')
+    plt.plot(f1, '-')
+    red_patch = mpatches.Patch(color='red', label='Precision')
+    blue_patch = mpatches.Patch(color='blue', label='Recall')
+    green_patch = mpatches.Patch(color='green', label='F1')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    plt.show()
+
+def plot_ROC(recall, FPR):
+
+    AUC = metrics.auc(FPR, recall)
+    AUC_str = str(AUC)
+    plt.clf()
+    plt.title('ROC Curve')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.ylim([0, 1])
+    plt.xlim([0, 1])
+    plt.plot(FPR, recall, '-')
+    AUC_value = mpatches.Patch(color='blue', label='AUC = ' + AUC_str)
+    plt.legend(handles=[AUC_value])
+    plt.show()
+
+
 
 def init_vectors():
 
@@ -98,7 +148,7 @@ def init_vectors():
     return vec_FP, vec_FN, vec_TP, vec_TN,
 
 
-def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccFP, AccFN, AccTP, AccTN):
+def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, vec_FPR, AccFP, AccFN, AccTP, AccTN):
 
     """
     Description: accumulate values
@@ -128,9 +178,15 @@ def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccF
         F1 = 2 * P * R / (P + R)
     else:
         F1 = 0
+    if float(FP + TN) != 0.0:
+        FPR = FP / float(FP + TN)
+    else:
+        FPR = 0
+
     vec_P.append(P)
     vec_R.append(R)
     vec_F1.append(F1)
-    return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1
+    vec_FPR.append(FPR)
+    return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, vec_FPR
 
 
