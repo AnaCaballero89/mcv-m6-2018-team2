@@ -98,7 +98,7 @@ def init_vectors():
     return vec_FP, vec_FN, vec_TP, vec_TN,
 
 
-def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1):
+def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccFP, AccFN, AccTP, AccTN):
 
     """
     Description: accumulate values
@@ -110,10 +110,27 @@ def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccF
     vec_FN.append(AccFN)
     vec_TP.append(AccTP)
     vec_TN.append(AccTN)
-    vec_P.append(AccP)
-    vec_R.append(AccR)
-    vec_F1.append(AccF1)  
-
+    FP = sum(vec_FP)
+    FN = sum(vec_FN)
+    TP = sum(vec_TP)
+    TN = sum(vec_TN)
+    if float(TP + FP) != 0.0:
+        P = TP / float(TP + FP)
+    else:
+        P = 0
+        # Recall (R)
+    if float(TP + FN) != 0.0:
+        R = TP / float(TP + FN)
+    else:
+        R = 0
+        # F1 score (F1)
+    if float(P + R) != 0.0:
+        F1 = 2 * P * R / (P + R)
+    else:
+        F1 = 0
+    vec_P.append(P)
+    vec_R.append(R)
+    vec_F1.append(F1)
     return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1
 
 

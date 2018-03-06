@@ -92,26 +92,30 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
             gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png",0)
             # Remember that we will use values as background 0 and 50, foreground 255, and unknow (not evaluated) 85 and 170
             # Replace values acording previous assumption
-            gt[gt == HARD_SHADOW] = 0
+            """gt[gt == HARD_SHADOW] = 0
             gt[gt == OUTSIDE_REGION] = 0
-            gt[gt == UNKNOW_MOTION] = 0
+            gt[gt == UNKNOW_MOTION] = 0"""
+
+            background = background.flatten()
+            gt = gt.flatten()
+            index2remove = [index for index, gt in enumerate(gt)
+                            if index == OUTSIDE_REGION or index == UNKNOW_MOTION]
+            gt = np.remove(gt, index2remove)
+            background = np.remove(background, index2remove)
 
             # Evaluate results
-            TP, FP, TN, FN, P, R, F1 = evaluate_sample(background, gt)
+            TP, FP, TN, FN= evaluate_sample(background, gt)
 
             # Accumulate metrics
             AccTP = AccTP + TP
             AccTN = AccTN + TN
             AccFP = AccFP + FP
             AccFN = AccFN + FN
-            AccP = AccP + P
-            AccR = AccR + R
-            AccF1 = AccF1 + F1
 
             # Write frame into video
             video_frame = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB)
             out.write(video_frame)	
 
-    return AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1
+    return AccFP, AccFN, AccTP, AccTN
 
 

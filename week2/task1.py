@@ -53,7 +53,7 @@ if __name__ == "__main__":
     print "Starting gaussian modelling on highway dataset computation..."
     for alpha in alphas:
         mean_matrix, std_matrix = training(highway_path_in, 1050, 1199, alpha);
-        AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1 = gaussian(highway_path_in, highway_path_gt, 1200, 1349, mean_matrix, std_matrix, alpha) 
+        AccFP, AccFN, AccTP, AccTN= gaussian(highway_path_in, highway_path_gt, 1200, 1349, mean_matrix, std_matrix, alpha)
         vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1)
         print "Computed gaussian modelling on highway dataset with alpha "+str(alpha)
     print "Starting gaussian modelling on highway dataset computation... done\n"
@@ -67,8 +67,8 @@ if __name__ == "__main__":
     print "Starting gaussian modelling on fall dataset computation..."
     for alpha in alphas:
         mean_matrix, std_matrix = training(fall_path_in, 1460, 1509, alpha);
-        AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1 = gaussian(fall_path_in, fall_path_gt, 1510, 1559, mean_matrix, std_matrix, alpha) 
-        vec_FP, vec_FN, vec_TP, vec_TN, vec_P2, vec_R2, vec_F12 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P2, vec_R2, vec_F12, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1)
+        AccFP, AccFN, AccTP, AccTN = gaussian(fall_path_in, fall_path_gt, 1510, 1559, mean_matrix, std_matrix, alpha)
+        vec_FP, vec_FN, vec_TP, vec_TN, vec_P2, vec_R2, vec_F12 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P2, vec_R2, vec_F12, AccFP, AccFN, AccTP, AccTN)
         print "Computed gaussian modelling on fall dataset with alpha "+str(alpha)
     print "Starting gaussian modelling on fall dataset computation... done\n"
 
@@ -81,8 +81,8 @@ if __name__ == "__main__":
     print "Starting gaussian modelling on traffic dataset computation..."
     for alpha in alphas:
         mean_matrix, std_matrix = training(traffic_path_in, 950, 999, alpha);
-        AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1 = gaussian(traffic_path_in, traffic_path_gt, 1000, 1049, mean_matrix, std_matrix, alpha) 
-        vec_FP, vec_FN, vec_TP, vec_TN, vec_P3, vec_R3, vec_F13 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P3, vec_R3, vec_F13, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1)
+        AccFP, AccFN, AccTP, AccTN = gaussian(traffic_path_in, traffic_path_gt, 1000, 1049, mean_matrix, std_matrix, alpha)
+        vec_FP, vec_FN, vec_TP, vec_TN, vec_P3, vec_R3, vec_F13 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P3, vec_R3, vec_F13, AccFP, AccFN, AccTP, AccTN)
         print "Computed gaussian modelling on traffic with alpha "+str(alpha)
     print "Starting gaussian modelling on traffic dataset computation... done\n"
 

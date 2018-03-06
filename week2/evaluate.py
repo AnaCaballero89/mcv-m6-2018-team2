@@ -33,22 +33,6 @@ def evaluate_sample(mask, gt):
     else:
         TN, FP, FN, TP = confusion_matrix(gt.flatten(), mask.flatten()).ravel()
 
-    # Precision (P) 
-    if float(TP + FP) != 0.0:
-            P = TP / float(TP + FP)
-    else:  
-        P = 0
-    # Recall (R)
-    if float(TP + FN) != 0.0:
-         R = TP / float(TP + FN)
-    else: 
-        R = 0
-    # F1 score (F1)
-    if float(P + R) != 0.0:
-        F1 = 2 * P * R / (P + R)
-    else: 
-        F1 = 0
-
-    return TP, FP, TN, FN, P, R, F1
+    return TP, FP, TN, FN
 
 
