@@ -1,5 +1,7 @@
 # Authors
 ## Team 2
+
+| Authors  | Emails | Github |
 | ------------- | ------------- | ------------- |
 | Guillem Delgado  | guillem.delgado@gmail.com  | [guillemdelgado](https://github.com/guillemdelgado) |
 | Francisco Roldan | fran.roldans@gmail.com | [franroldans](https://github.com/franroldans) |
