@@ -54,7 +54,7 @@ if __name__ == "__main__":
     for alpha in alphas:
         mean_matrix, std_matrix = training(highway_path_in, 1050, 1199, alpha);
         AccFP, AccFN, AccTP, AccTN= gaussian(highway_path_in, highway_path_gt, 1200, 1349, mean_matrix, std_matrix, alpha)
-        vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11, AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1)
+        vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11, AccFP, AccFN, AccTP, AccTN)
         print "Computed gaussian modelling on highway dataset with alpha "+str(alpha)
     print "Starting gaussian modelling on highway dataset computation... done\n"
     
