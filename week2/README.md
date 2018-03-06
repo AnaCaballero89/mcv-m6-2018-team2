@@ -3,7 +3,7 @@
 Tasks:
 
 - [x] Task 1.1: Gaussian distribution 
-- [ ] Task 1.2 & 1.3: Evaluate results
+- [x] Task 1.2 & 1.3: Evaluate results
 - [ ] Task 2.1: Recursive Gaussian modelling
   - [x] Adaptive modelling
   - [ ] Best pair of values to maximize F1-score
