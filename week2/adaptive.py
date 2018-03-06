@@ -7,11 +7,16 @@ import os
 import math
 import cv2
 import numpy as np
+from evaluate import evaluate_sample
 
 # Path to save images and videos
 images_path = "std-mean-images/"
 video_path = "background-subtraction-videos/"
-
+STATIC = 0
+HARD_SHADOW = 50
+OUTSIDE_REGION = 85
+UNKNOW_MOTION = 170
+MOTION = 255
 
 def get_accumulator(path_test):
 
@@ -27,11 +32,11 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "datasets/highway/input/":
+    if path_test == "./highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "datasets/fall/input/":
+    if path_test == "./fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "datasets/traffic/input/":
+    if path_test == "./traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator
@@ -44,7 +49,11 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
     Input: path_test, first_frame, last_frame,  mean_matrix, std_matrix, alpha, rho
     Output: None
     """
-
+    # Initialize metrics accumulators
+    AccFP = 0
+    AccFN = 0
+    AccTP = 0
+    AccTN = 0
     # Initialize index to accumulate images
     index = 0
 
@@ -75,7 +84,26 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
 
             # Write frame into video
             video_frame = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB)
-            out.write(video_frame)	
+            out.write(video_frame)
+            # Read groundtruth image
+            path_gt = "./highway/groundtruth/"
+            gt = cv2.imread(path_gt + "gt" + filename[2:8] + ".png", 0)
+            background = background.flatten()
+            gt = gt.flatten()
+            index2remove = [index for index, gt in enumerate(gt)
+                            if index == OUTSIDE_REGION or index == UNKNOW_MOTION]
+            gt = np.delete(gt, index2remove)
+            gt[gt == HARD_SHADOW] = 0
+            background = np.delete(background, index2remove)
+
+            # Evaluate results
+            TP, FP, TN, FN = evaluate_sample(background, gt)
+
+            # Accumulate metrics
+            AccTP = AccTP + TP
+            AccTN = AccTN + TN
+            AccFP = AccFP + FP
+            AccFN = AccFN + FN
 
             # Apply background mask to frame image to retrieve only background grayscale pixels 
             background = cv2.bitwise_and(frame, frame, mask = background)
@@ -95,5 +123,6 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
             sigma_matrix = sigma_matrix + foreground
             # Scales, calculates absolute values, and converts the result to 8-bit
             sigma_matrix = cv2.convertScaleAbs(sigma_matrix)
+            return AccFP, AccFN, AccTP, AccTN
 
 

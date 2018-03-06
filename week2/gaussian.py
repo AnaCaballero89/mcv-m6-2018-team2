@@ -9,10 +9,10 @@ import cv2
 import numpy as np
 from evaluate import *
 from sklearn.metrics import confusion_matrix
-
+from sklearn.metrics import precision_recall_fscore_support as score
 # Path to save images and videos
-images_path = "std-mean-images/"
-video_path = "background-subtraction-videos/"
+images_path = "./std-mean-images/"
+video_path = "./background-subtraction-videos/"
 
 # Define groundtruth labels namely
 STATIC = 0
@@ -36,11 +36,11 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "datasets/highway/input/":
+    if path_test == "./highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "datasets/fall/input/":
+    if path_test == "./fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "datasets/traffic/input/":
+    if path_test == "./traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator
@@ -59,16 +59,13 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
     AccFN = 0
     AccTP = 0
     AccTN = 0
-    AccP = 0
-    AccR = 0
-    AccF1 = 0
 
     # Initialize index to accumulate images
     index = 0
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(video_path+"gaussian_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
+    out = cv2.VideoWriter(video_path+"gaussian_"+str(alpha)+str(path_test.split("/")[1])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Read sequence of images sorted
     for filename in sorted(os.listdir(path_test)):
@@ -92,26 +89,23 @@ def gaussian(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matri
             gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png",0)
             # Remember that we will use values as background 0 and 50, foreground 255, and unknow (not evaluated) 85 and 170
             # Replace values acording previous assumption
-            """gt[gt == HARD_SHADOW] = 0
-            gt[gt == OUTSIDE_REGION] = 0
-            gt[gt == UNKNOW_MOTION] = 0"""
 
             background = background.flatten()
             gt = gt.flatten()
             index2remove = [index for index, gt in enumerate(gt)
-                            if index == OUTSIDE_REGION or index == UNKNOW_MOTION]
-            gt = np.remove(gt, index2remove)
-            background = np.remove(background, index2remove)
+                            if gt == UNKNOW_MOTION or gt == OUTSIDE_REGION]
+            gt = np.delete(gt, index2remove)
+            gt[gt == HARD_SHADOW] = 0
+            background = np.delete(background, index2remove)
 
             # Evaluate results
-            TP, FP, TN, FN= evaluate_sample(background, gt)
+            TP, FP, TN, FN = evaluate_sample(background, gt)
 
             # Accumulate metrics
             AccTP = AccTP + TP
             AccTN = AccTN + TN
             AccFP = AccFP + FP
             AccFN = AccFN + FN
-
             # Write frame into video
             video_frame = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB)
             out.write(video_frame)	

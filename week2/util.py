@@ -9,6 +9,29 @@ import matplotlib.patches as mpatches
 from sklearn import metrics
 
 
+def plot_fscore(vec_F1, vec_F2, vec_F3, alphas):
+
+    """
+    Description: plot recall
+    Input: vec_R1, vec_R2, vec_R3, alphas
+    Output: None
+    """
+
+    plt.clf()
+    plt.title('Recall vs alpha')
+    plt.xlabel('Threshold')
+    plt.ylabel('Recall')
+    plt.ylim([0, max(max(vec_F1),max(vec_F2),max(vec_F3))])
+    plt.xlim([0, max(alphas)])
+    plt.plot(vec_F1, 'r-')
+    plt.plot(vec_F2, 'b-')
+    plt.plot(vec_F3, 'g-')
+    red_patch = mpatches.Patch(color='red', label='highway')
+    blue_patch = mpatches.Patch(color='blue', label='fall')
+    green_patch = mpatches.Patch(color='green', label='traffic')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    plt.show()
+
 def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
 
     """
@@ -160,10 +183,10 @@ def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, vec_
     vec_FN.append(AccFN)
     vec_TP.append(AccTP)
     vec_TN.append(AccTN)
-    FP = sum(vec_FP)
-    FN = sum(vec_FN)
-    TP = sum(vec_TP)
-    TN = sum(vec_TN)
+    FP = AccFP
+    FN = AccFN
+    TP = AccTP
+    TN = AccTN
     if float(TP + FP) != 0.0:
         P = TP / float(TP + FP)
     else:
@@ -190,3 +213,23 @@ def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, vec_
     return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, vec_FPR
 
 
+def get_metrics(TP, TN, FP, FN):
+    if float(TP + FP) != 0.0:
+        P = TP / float(TP + FP)
+    else:
+        P = 0
+        # Recall (R)
+    if float(TP + FN) != 0.0:
+        R = TP / float(TP + FN)
+    else:
+        R = 0
+        # F1 score (F1)
+    if float(P + R) != 0.0:
+        F1 = 2 * P * R / (P + R)
+    else:
+        F1 = 0
+    if float(FP + TN) != 0.0:
+        FPR = FP / float(FP + TN)
+    else:
+        FPR = 0
+    return P, R, F1, FPR

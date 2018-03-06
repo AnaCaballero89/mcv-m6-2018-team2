@@ -13,16 +13,16 @@ from gaussian import *
 from util import *
 
 # Highway sequences configuration, range 1050 - 1350
-highway_path_in = "datasets/highway/input/"	
-highway_path_gt = "datasets/highway/groundtruth/"
+highway_path_in = "./highway/input/"
+highway_path_gt = "./highway/groundtruth/"
 
 # Fall sequences configuration, range 1460 - 1560
-fall_path_in = "datasets/fall/input/"  
-fall_path_gt = "datasets/fall/groundtruth/"  
+fall_path_in = "./fall/input/"
+fall_path_gt = "./fall/groundtruth/"
 
 # Traffic sequences configuration, range 950 - 1050
-traffic_path_in = "datasets/traffic/input/"
-traffic_path_gt = "datasets/traffic/groundtruth/"
+traffic_path_in = "./traffic/input/"
+traffic_path_gt = "./traffic/groundtruth/"
 
 # Define thresholds
 alphas = [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5]
@@ -58,7 +58,9 @@ if __name__ == "__main__":
         vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11, vec_FPR1 = accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P1, vec_R1, vec_F11, vec_FPR1, AccFP, AccFN, AccTP, AccTN)
         print("Computed gaussian modelling on highway dataset with alpha "+str(alpha))
     print("Starting gaussian modelling on highway dataset computation... done\n")
-    
+    print(vec_F11)
+    print(vec_R1)
+    print(vec_P1)
     # Plot metrics on graph
     plot_graph_FP_FN_TP_TN(vec_FP, vec_FN, vec_TP, vec_TN, alphas, 'highway')
     plot_PR_REC(vec_R1, vec_P1)
