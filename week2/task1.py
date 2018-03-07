@@ -63,9 +63,9 @@ if __name__ == "__main__":
     print(vec_P1)
     # Plot metrics on graph
     plot_graph_FP_FN_TP_TN(vec_FP, vec_FN, vec_TP, vec_TN, alphas, 'highway')
-    plot_PR_REC(vec_R1, vec_P1)
+    #plot_PR_REC(vec_R1, vec_P1, 'highway')
     plot_metrics_alpha(vec_P1, vec_R1, vec_F11, alphas, 'highway')
-    plot_ROC(vec_R1, vec_FPR1)
+    #plot_ROC(vec_R1, vec_FPR1, 'highway')
 
     # Initialize vectors
     vec_FP, vec_FN, vec_TP, vec_TN = init_vectors()
@@ -80,9 +80,9 @@ if __name__ == "__main__":
 
     # Plot metrics on graph
     plot_graph_FP_FN_TP_TN(vec_FP, vec_FN, vec_TP, vec_TN, alphas, 'fall')
-    plot_PR_REC(vec_R2, vec_P2)
+    #plot_PR_REC(vec_R2, vec_P2, 'fall')
     plot_metrics_alpha(vec_P2,vec_R2,vec_F12, alphas, 'fall')
-    plot_ROC(vec_R2, vec_FPR2)
+    #plot_ROC(vec_R2, vec_FPR2, 'fall')
 
     # Initialize vectors
     vec_FP, vec_FN, vec_TP, vec_TN = init_vectors()
@@ -97,14 +97,19 @@ if __name__ == "__main__":
 
     # Plot metrics on graph
     plot_graph_FP_FN_TP_TN(vec_FP, vec_FN, vec_TP, vec_TN, alphas, 'traffic')
-    plot_PR_REC(vec_R3, vec_P3)
+    #plot_PR_REC(vec_R3, vec_P3, 'traffic')
     plot_metrics_alpha(vec_P3, vec_R3, vec_F13, alphas, 'traffic')
-    plot_ROC(vec_R3, vec_FPR3)
+    #plot_ROC(vec_R3, vec_FPR3, 'traffic')
 
     # Plot recall on graph
     plot_recall(vec_R1, vec_R2, vec_R3, alphas)
 
     # Plot precision on graph
     plot_precision(vec_P1, vec_P2, vec_P3, alphas)
-
+    #Plot fscore on graph
+    plot_fscore(vec_F11, vec_F12, vec_F13, alphas)
+    # plot precision-recall:
+    plot_PR_REC(vec_P1, vec_P2, vec_P3, vec_R1, vec_R2, vec_R3)
+    #PLOT ROC curves
+    plot_ROC(vec_R1, vec_FPR1, vec_R2, vec_FPR2, vec_R3, vec_FPR3)
 

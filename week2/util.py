@@ -30,7 +30,7 @@ def plot_fscore(vec_F1, vec_F2, vec_F3, alphas):
     blue_patch = mpatches.Patch(color='blue', label='fall')
     green_patch = mpatches.Patch(color='green', label='traffic')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    plt.savefig()
 
 def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
 
@@ -53,7 +53,8 @@ def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
     blue_patch = mpatches.Patch(color='blue', label='fall')
     green_patch = mpatches.Patch(color='green', label='traffic')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    #plt.show()
+    plt.savefig('recall.png')
 
 
 def plot_precision(vec_P1, vec_P2, vec_P3, alphas):
@@ -77,7 +78,9 @@ def plot_precision(vec_P1, vec_P2, vec_P3, alphas):
     blue_patch = mpatches.Patch(color='blue', label='fall')
     green_patch = mpatches.Patch(color='green', label='traffic')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    #plt.show()
+    plt.savefig('precision.png')
+
 
 
 def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
@@ -103,17 +106,25 @@ def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
     green_patch = mpatches.Patch(color='green', label='TP')
     orange_patch = mpatches.Patch(color='orange', label='TN')
     plt.legend(handles=[red_patch, blue_patch, green_patch, orange_patch])
-    plt.show()
+    #plt.show()
+    plt.savefig('tp_fn_fp_tn'+name+'.png')
 
-def plot_PR_REC(rec, prec):
+def plot_PR_REC(vec_P1, vec_P2, vec_P3, vec_R1, vec_R2, vec_R3):
     plt.clf()
     plt.title('Precision and recall curve')
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.ylim([0, 1])
     plt.xlim([0, 1])
-    plt.plot(rec, prec)
-    plt.show()
+    plt.plot(vec_R1, vec_P1)
+    plt.plot(vec_R2, vec_P2)
+    plt.plot(vec_R3, vec_P3)
+    red_patch = mpatches.Patch(color='red', label='highway')
+    blue_patch = mpatches.Patch(color='blue', label='fall')
+    green_patch = mpatches.Patch(color='green', label='traffic')
+    plt.legend(handles=[red_patch, blue_patch, green_patch])
+    #plt.show()
+    plt.savefig('precision_recall_overall.png')
 
 def plot_metrics_alpha(prec,rec,f1, alphas, name):
 
@@ -136,22 +147,32 @@ def plot_metrics_alpha(prec,rec,f1, alphas, name):
     blue_patch = mpatches.Patch(color='blue', label='Recall')
     green_patch = mpatches.Patch(color='green', label='F1')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    #plt.show()
+    plt.savefig('metrics'+name+'.png')
 
-def plot_ROC(recall, FPR):
+def plot_ROC(vec_R1, vec_FPR1, vec_R2, vec_FPR2, vec_R3, vec_FPR3):
 
-    AUC = metrics.auc(FPR, recall)
-    AUC_str = str(AUC)
+    AUC1 = metrics.auc(vec_FPR1, vec_R1)
+    AUC_str1 = str(AUC1)
+    AUC2 = metrics.auc(vec_FPR2, vec_R2)
+    AUC_str2 = str(AUC2)
+    AUC3 = metrics.auc(vec_FPR3, vec_R3)
+    AUC_str3 = str(AUC3)
     plt.clf()
     plt.title('ROC Curve')
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.ylim([0, 1])
     plt.xlim([0, 1])
-    plt.plot(FPR, recall, '-')
-    AUC_value = mpatches.Patch(color='blue', label='AUC = ' + AUC_str)
-    plt.legend(handles=[AUC_value])
-    plt.show()
+    plt.plot(vec_FPR1, vec_R1, '-')
+    plt.plot(vec_FPR2, vec_R2, '-')
+    plt.plot(vec_FPR3, vec_R3, '-')
+    AUC_value1 = mpatches.Patch(color='blue', label='AUC = ' + AUC_str1)
+    AUC_value2 = mpatches.Patch(color='blue', label='AUC = ' + AUC_str2)
+    AUC_value3 = mpatches.Patch(color='blue', label='AUC = ' + AUC_str3)
+    plt.legend(handles=[AUC_value1, AUC_value2, AUC_value3])
+    plt.savefig('roc_overall.png')
+    #plt.show()
 
 
 
