@@ -15,5 +15,8 @@ Description
 ## Week1
 
 ## Week2
-- Task 1: Run the python file *task1.py*
-- Task 4: Run the python file *task1_color.py*
+To run each experiment type:
+
+    python taskX.py 
+  
+where X is the task id.
