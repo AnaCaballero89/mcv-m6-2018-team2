@@ -16,3 +16,4 @@ Description
 
 ## Week2
 - Task 1: Run the python file *task1.py*
+- Task 4: Run the python file *task1_color.py*
