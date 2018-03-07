@@ -8,5 +8,11 @@ Tasks:
   - [x] Adaptive modelling
   - [x] Best pair of values to maximize F1-score
 - [ ] Task 2.2: Evaluate and compare to non-recursive
-- [ ] Task 3: Compare with state of the art
-- [ ] Task 4: Color sequences
+- [x] Task 3: Compare with state of the art
+- [x] Task 4: Color sequences
+
+To run each experiment type:
+
+    python taskX.py 
+  
+where X is the task id.
