@@ -4,9 +4,9 @@ Tasks:
 
 - [x] Task 1.1: Gaussian distribution 
 - [x] Task 1.2 & 1.3: Evaluate results
-- [ ] Task 2.1: Recursive Gaussian modelling
+- [x] Task 2.1: Recursive Gaussian modelling
   - [x] Adaptive modelling
-  - [ ] Best pair of values to maximize F1-score
+  - [x] Best pair of values to maximize F1-score
 - [ ] Task 2.2: Evaluate and compare to non-recursive
 - [ ] Task 3: Compare with state of the art
 - [ ] Task 4: Color sequences
