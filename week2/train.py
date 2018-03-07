@@ -27,11 +27,11 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "datasets/highway/input/":
+    if path_test == "./highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "datasets/fall/input/":
+    if path_test == "./fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "datasets/traffic/input/":
+    if path_test == "./traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator

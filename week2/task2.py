@@ -33,60 +33,56 @@ if __name__ == "__main__":
     # First 50% frames for training
     # Second 50% left backgrounds adapts
 
-    print("Computing adaptive modelling on highway dataset...")
-    mu_matrix, sigma_matrix = training(highway_path_in, 1050, 1199, highway_alpha)
-    AccFP, AccFN, AccTP, AccTN = adaptive(highway_path_in, 1200, 1349, mu_matrix, sigma_matrix, highway_alpha, highway_rho)
-    print("Computing adaptive modelling on hihighway dataset... done")
-
-    print("Computing adaptive modelling on fall dataset...")
-    mu_matrix, sigma_matrix = training(fall_path_in, 1460, 1509, fall_alpha)
-    AccFP, AccFN, AccTP, AccTN = adaptive(fall_path_in, 1510, 1559, mu_matrix, sigma_matrix, fall_alpha, fall_rho)
-    print("Computing adaptive modelling on fall dataset... done")
-
-    print("Computing adaptive modelling on traffic dataset...")
-    mu_matrix, sigma_matrix = training(traffic_path_in, 950, 999, traffic_alpha)
-    AccFP, AccFN, AccTP, AccTN = adaptive(traffic_path_in, 1000, 1049, mu_matrix, sigma_matrix, traffic_alpha, traffic_rho)
-    print("Computing adaptive modelling on traffic dataset... done")
-
     alphas = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
-    rhos = np.arange(0, 1.1, 0.1)
+    rhos = np.arange(0, 1, 0.1)
     vec_FP, vec_FN, vec_TP, vec_TN = init_vectors()
     best_F = 0
     best_rho = 0
     best_alpha = 0
     print("Computing grid search on highway dataset...")
     for rho in rhos:
-        for alpha in alpha:
+        for alpha in alphas:
             mu_matrix, sigma_matrix = training(highway_path_in, 1050, 1199, alpha)
             AccFP, AccFN, AccTP, AccTN = adaptive(highway_path_in, 1200, 1349, mu_matrix, sigma_matrix,
-                                                  alpha, rho)
+                                                  alpha, rho, highway_path_gt)
             P, R, F1, FPR = get_metrics(AccTP, AccTN, AccFP, AccFN)
             if F1 > best_F:
                 best_F = F1
                 best_alpha = alpha
                 best_rho = rho
-    print('Highway: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}').format(best_F, best_alpha, best_rho)
+    print('Highway: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}'.format(best_F, best_alpha, best_rho))
+
+
+    vec_FP, vec_FN, vec_TP, vec_TN = init_vectors()
+    best_F = 0
+    best_rho = 0
+    best_alpha = 0
     print("Computing grid search on fall dataset...")
     for rho in rhos:
-        for alpha in alpha:
-            mu_matrix, sigma_matrix = training(fall_path_in, 1050, 1199, alpha)
-            AccFP, AccFN, AccTP, AccTN = adaptive(fall_path_in, 1200, 1349, mu_matrix, sigma_matrix,
-                                                  alpha, rho)
+        for alpha in alphas:
+            mu_matrix, sigma_matrix = training(fall_path_in, 1460, 1509, alpha)
+            AccFP, AccFN, AccTP, AccTN = adaptive(fall_path_in, 1510, 1559, mu_matrix, sigma_matrix,
+                                                  alpha, rho, fall_path_gt)
             P, R, F1, FPR = get_metrics(AccTP, AccTN, AccFP, AccFN)
             if F1 > best_F:
                 best_F = F1
                 best_alpha = alpha
                 best_rho = rho
-    print('Fall: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}').format(best_F, best_alpha, best_rho)
+    print('Fall: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}'.format(best_F, best_alpha, best_rho))
+
+    vec_FP, vec_FN, vec_TP, vec_TN = init_vectors()
+    best_F = 0
+    best_rho = 0
+    best_alpha = 0
     print("Computing grid search on traffic dataset...")
     for rho in rhos:
-        for alpha in alpha:
-            mu_matrix, sigma_matrix = training(traffic_path_in, 1050, 1199, alpha)
-            AccFP, AccFN, AccTP, AccTN = adaptive(traffic_path_in, 1200, 1349, mu_matrix, sigma_matrix,
-                                                  alpha, rho)
+        for alpha in alphas:
+            mu_matrix, sigma_matrix = training(traffic_path_in, 950, 999, alpha)
+            AccFP, AccFN, AccTP, AccTN = adaptive(traffic_path_in, 1000, 1049, mu_matrix, sigma_matrix,
+                                                  alpha, rho, traffic_path_gt)
             P, R, F1, FPR = get_metrics(AccTP, AccTN, AccFP, AccFN)
             if F1 > best_F:
                 best_F = F1
                 best_alpha = alpha
                 best_rho = rho
-    print('Traffic: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}').format(best_F, best_alpha, best_rho)
+    print('Traffic: Best F-Score: {} , optimal alpha : {} , optimal_rho: {}'.format(best_F, best_alpha, best_rho))

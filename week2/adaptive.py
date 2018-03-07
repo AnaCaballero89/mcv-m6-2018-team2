@@ -42,7 +42,7 @@ def get_accumulator(path_test):
     return accumulator
 
 
-def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha, rho):
+def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha, rho, path_gt):
 
     """
     Description: background adapts
@@ -86,18 +86,18 @@ def adaptive(path_test, first_frame, last_frame, mu_matrix, sigma_matrix, alpha,
             video_frame = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB)
             out.write(video_frame)
             # Read groundtruth image
-            path_gt = "./highway/groundtruth/"
             gt = cv2.imread(path_gt + "gt" + filename[2:8] + ".png", 0)
-            background = background.flatten()
-            gt = gt.flatten()
-            index2remove = [index for index, gt in enumerate(gt)
-                            if index == OUTSIDE_REGION or index == UNKNOW_MOTION]
-            gt = np.delete(gt, index2remove)
-            gt[gt == HARD_SHADOW] = 0
-            background = np.delete(background, index2remove)
+            background_f = background.flatten()
+            gt_f = gt.flatten()
+            index2remove = [index for index, gt_f in enumerate(gt_f)
+                            if gt_f == OUTSIDE_REGION or gt_f == UNKNOW_MOTION]
+            gt_f = np.delete(gt_f, index2remove)
+            gt_f[gt_f == HARD_SHADOW] = 0
+            background_f = np.delete(background_f, index2remove)
 
             # Evaluate results
-            TP, FP, TN, FN = evaluate_sample(background, gt)
+
+            TP, FP, TN, FN = evaluate_sample(background_f, gt_f)
 
             # Accumulate metrics
             AccTP = AccTP + TP
