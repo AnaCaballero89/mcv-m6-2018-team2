@@ -1,15 +1,15 @@
-# Week 2 Background estimation, Stauffer & Grimson
+# Week 2 Foreground segmentation, area and hole filters, shadow removal
 
 Tasks:
 
-- [x] Task 1.1: Gaussian distribution 
-- [x] Task 1.2 & 1.3: Evaluate results
-- [x] Task 2.1: Recursive Gaussian modelling
-  - [x] Adaptive modelling
-  - [x] Best pair of values to maximize F1-score
-- [ ] Task 2.2: Evaluate and compare to non-recursive
-- [x] Task 3: Compare with state of the art
-- [x] Task 4: Color sequences
+- [x] Task 1: Hole filling
+- [x] Task 2: Area filtering
+  - [x] Task 2.1: Plot AUC vs P
+  - [ ] Task 2.2: Estimate the best P
+- [ ] Task 2.2: Aditional morphological operations
+- [ ] Task 4: Shadow removal
+- [ ] Task 5.1: Update Precision-Recall(PR) Curve
+- [ ] Task 5.2: Update Area Under the Curve (AUC)
 
 To run each experiment type:
 
