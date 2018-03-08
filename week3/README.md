@@ -1,4 +1,4 @@
-# Week 2 Foreground segmentation, area and hole filters, shadow removal
+# Week 3 Foreground segmentation, area and hole filters, shadow removal
 
 Tasks:
 
