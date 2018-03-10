@@ -15,8 +15,10 @@ from skimage.segmentation import clear_border
 from PIL import Image
 from skimage.measure import label
 from skimage.measure import regionprops
+from util import preprocess_pred_gt
 
-# Define colors spaces to tranform frames
+
+# Define colors spaces to transform frames
 colorSpaceConversion={}
 colorSpaceConversion['YCrCb'] = cv2.COLOR_BGR2YCR_CB
 colorSpaceConversion['HSV']   = cv2.COLOR_BGR2HSV
@@ -48,11 +50,11 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "datasets/highway/input/":
+    if path_test == "/imatge/froldan/work/highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "datasets/fall/input/":
+    if path_test == "/imatge/froldan/work/fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "datasets/traffic/input/":
+    if path_test == "/imatge/froldan/work/traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator
@@ -112,11 +114,6 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
 
             # Read groundtruth image
             gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png", 0)
-            # Remember that we will use values as background 0 and 50, foreground 255, and unknow (not evaluated) 85 and 170
-            # Replace values acording previous assumption
-            gt[gt == HARD_SHADOW] = 0
-            gt[gt == OUTSIDE_REGION] = 0
-            gt[gt == UNKNOW_MOTION] = 0
 
             # Hole filling
             background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)             
@@ -134,8 +131,9 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
                     minr, minc,  maxr, maxc = region.bbox
                     background[minr:maxr,minc:maxc] = 0
 
+            bck, gt = preprocess_pred_gt(background, gt)
             # Evaluate results
-            TP, FP, TN, FN = evaluate_sample(background, gt)
+            TP, FP, TN, FN = evaluate_sample(bck, gt)
 
             # Accumulate metrics
             AccTP = AccTP + TP

@@ -6,6 +6,14 @@ __license__ = "M6 Video Analysis"
 import os
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import numpy as np
+
+# Define groundtruth labels namely
+STATIC = 0
+HARD_SHADOW = 50
+OUTSIDE_REGION = 85
+UNKNOW_MOTION = 170
+MOTION = 255
 
 
 def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
@@ -115,5 +123,18 @@ def accumulate_values(vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1, AccF
     vec_F1.append(AccF1)  
 
     return vec_FP, vec_FN, vec_TP, vec_TN, vec_P, vec_R, vec_F1
+
+
+def preprocess_pred_gt(mask, groundtruth):
+    "Function to use before evaluating a sample!!"
+
+    background = mask.flatten()
+    groundtruth = groundtruth.flatten()
+    index2remove = [index for index, g in enumerate(groundtruth)
+                    if g == UNKNOW_MOTION or g == OUTSIDE_REGION]
+    groundtruth = [0 if x == HARD_SHADOW else x for idx, x in enumerate(groundtruth)]
+    groundtruth = np.delete(groundtruth, index2remove)
+    background = np.delete(background, index2remove)
+    return background, groundtruth
 
 

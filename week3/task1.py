@@ -11,16 +11,16 @@ from util import *
 from sklearn import metrics
 
 # Highway sequences configuration, range 1050 - 1350
-highway_path_in = "datasets/highway/input/"	
-highway_path_gt = "datasets/highway/groundtruth/"
+highway_path_in = "/imatge/froldan/work/highway/input/"
+highway_path_gt = "/imatge/froldan/work/highway/groundtruth/"
 
 # Fall sequences configuration, range 1460 - 1560
-fall_path_in = "datasets/fall/input/"  
-fall_path_gt = "datasets/fall/groundtruth/"  
+fall_path_in = "/imatge/froldan/work/fall/input/"
+fall_path_gt = "/imatge/froldan/work/fall/groundtruth/"
 
 # Traffic sequences configuration, range 950 - 1050
-traffic_path_in = "datasets/traffic/input/"
-traffic_path_gt = "datasets/traffic/groundtruth/"
+traffic_path_in = "/imatge/froldan/work/traffic/input/"
+traffic_path_gt = "/imatge/froldan/work/traffic/groundtruth/"
 
 # Group sequences 
 path_tests = [highway_path_in,fall_path_in,traffic_path_in]
@@ -61,13 +61,13 @@ if __name__ == "__main__":
     for cI in range(len(colorSpaces)):
         colorSpace=colorSpaces[cI]
         for dataset in [0,1,2]:
-            print "Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"..."
+            print("Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"...")
             for aI in range(len(alphas)):
                 alpha=alphas[aI]
                 mean_matrix, std_matrix = training_color(path_tests[dataset], first_frames[dataset], midle_frames[dataset], alpha, colorSpace);
                 FP[dataset,aI,cI], FN[dataset,aI,cI], TP[dataset,aI,cI], TN[dataset,aI,cI], P[dataset,aI,cI], R[dataset,aI,cI], F1[dataset,aI,cI] = gaussian_color(path_tests[dataset], path_gts[dataset], midle_frames[dataset]+1, last_frames[dataset], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaPixels)
-                print "Computed gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+" with alpha: "+str(alpha)
-            print "Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset,:,cI],P[dataset,:,cI]))+"\n"
+                print("Computed gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+" with alpha: "+str(alpha))
+            print("Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset,:,cI],P[dataset,:,cI]))+"\n")
 
     plt.figure(1)
     for j in np.arange(P.shape[2]):
