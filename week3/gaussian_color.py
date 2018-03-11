@@ -60,7 +60,7 @@ def get_accumulator(path_test):
     return accumulator
 
 
-def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matrix, alpha, colorSpace, connectivity, areaPixels):
+def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma_matrix, alpha, colorSpace, connectivity, areaPixels,ac_morphology,SE1size,SE2size):
 
     """
     Description: gaussian 
@@ -116,7 +116,13 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
             gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png", 0)
 
             # Hole filling
-            background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)             
+            background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)         
+	    if ac_morphology==1:
+                background = dilation(background,SE1size)
+                background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)
+                background = erosion(background,SE1size)
+                background = remove_dots(background,SE2size)
+		
             # Replace 1 by 255
             background[background == 1] = 255
             # Scales, calculates absolute values, and converts the result to 8-bit
