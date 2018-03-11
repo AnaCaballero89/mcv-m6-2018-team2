@@ -30,16 +30,16 @@ midle_frames = [1199,1509,999]
 last_frames = [1349,1559,1049]
 
 # Define color spaces ['RGB','HSV','YCrCb']
-colorSpaces=['RGB','HSV','YCrCb']
+colorSpaces=['YCrCb', 'YCrCb', 'YCrCb']
 
 # Threshold on gaussian
-alphas = np.arange(0,5,0.5)             
-
+alphas = np.arange(0,5,0.5)
+dataset = [0, 1, 2]
 # Connectivity to fill holes [4, 8]
 connectivity = '4'   
 
 # Pixels of area filltering   
-minAreaPixels = 100    
+minAreaPixels = 0
 
 # Define accumulators
 FP = np.zeros((3,len(alphas),len(colorSpaces)), np.int)
@@ -56,32 +56,31 @@ if __name__ == "__main__":
     # Post process with hole filling
     # Try different connectivities: 4 and 8
     # Report with AUC & gain for each sequences
-    # Provide qualitative interpretation
-    
-    for cI in range(len(colorSpaces)):
-        colorSpace=colorSpaces[cI]
-        for dataset in [0,1,2]:
-            print("Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"...")
+    # Provide qualitative interpretation...
+    print("Evaluating model using {} -connectivity".format(connectivity))
+    for cI, colorSpace in enumerate(colorSpaces):
+            print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"...")
             for aI in range(len(alphas)):
                 alpha=alphas[aI]
-                mean_matrix, std_matrix = training_color(path_tests[dataset], first_frames[dataset], midle_frames[dataset], alpha, colorSpace);
-                FP[dataset,aI,cI], FN[dataset,aI,cI], TP[dataset,aI,cI], TN[dataset,aI,cI], P[dataset,aI,cI], R[dataset,aI,cI], F1[dataset,aI,cI] = gaussian_color(path_tests[dataset], path_gts[dataset], midle_frames[dataset]+1, last_frames[dataset], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaPixels)
-                print("Computed gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+" with alpha: "+str(alpha))
-            print("Starting gaussian modelling dataset num: "+str(dataset)+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset,:,cI],P[dataset,:,cI]))+"\n")
+                mean_matrix, std_matrix = training_color(path_tests[dataset[cI]], first_frames[dataset[cI]], midle_frames[dataset[cI]], alpha, colorSpace);
+                FP[dataset[cI],aI,cI], FN[dataset[cI],aI,cI], TP[dataset[cI],aI,cI], TN[dataset[cI],aI,cI], P[dataset[cI],aI,cI], R[dataset[cI],aI,cI], F1[dataset[cI],aI,cI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaPixels)
+                print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
+            print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset[cI],:,cI],P[dataset[cI],:,cI]))+"\n")
 
-    plt.figure(1)
+    #plt.clf()
     for j in np.arange(P.shape[2]):
         for i in np.arange(P.shape[0]):
             plt.plot(alphas,F1[i,:,j],label='F1-Dataset'+str(i)+'_'+colorSpaces[j])
     plt.xlabel('alpha')
     plt.legend()
-
-    plt.figure(2)
+    plt.savefig('f1.png')
+    #plt.clf()
     for j in np.arange(P.shape[2]):
         for i in np.arange(P.shape[0]):
             plt.plot(R[i,:,j],P[i,:,j],label='Dataset'+str(i)+'_'+colorSpaces[j]+' - AUC='+str(metrics.auc(R[i,:,j],P[i,:,j])))
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.legend()
+    plt.savefig('prec_rec.png')
 
 

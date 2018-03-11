@@ -125,11 +125,12 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
             # Area filltering, label background regions
             label_image = label(background)		
             # Measure properties of labeled background regions
-            for region in regionprops(label_image):
-                # Remove regions smaller than fixed area
-                if region.area < areaPixels:
-                    minr, minc,  maxr, maxc = region.bbox
-                    background[minr:maxr,minc:maxc] = 0
+            if areaPixels > 0:
+                for region in regionprops(label_image):
+                    # Remove regions smaller than fixed area
+                    if region.area < areaPixels:
+                        minr, minc,  maxr, maxc = region.bbox
+                        background[minr:maxr,minc:maxc] = 0
 
             bck, gt = preprocess_pred_gt(background, gt)
             # Evaluate results
@@ -146,9 +147,19 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
             out.write(video_frame)	
 
     # Compute metrics
-    AccP = AccTP / float(AccTP + AccFP)
-    AccR = AccTP / float(AccTP + AccFN)
-    AccF1 = 2 * AccP * AccR / (AccP + AccR)
+    print(" AccTP: {}  AccFP: {}  AccFN: {}".format(AccTP, AccFP, AccFN))
+    if AccTP+AccFP == 0:
+        AccP = 0
+    else:
+        AccP = AccTP / float(AccTP + AccFP)
+    if AccTP + AccFN == 0:
+        AccR = 0
+    else:
+        AccR = AccTP / float(AccTP + AccFN)
+    if AccR == 0 and AccP == 0:
+        AccF1 = 0
+    else:
+        AccF1 = 2 * AccP * AccR / (AccP + AccR)
 
     return AccFP, AccFN, AccTP, AccTN, AccP, AccR, AccF1
 

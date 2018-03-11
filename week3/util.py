@@ -16,7 +16,7 @@ UNKNOW_MOTION = 170
 MOTION = 255
 
 
-def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
+def plot_recall(vec_R1, vec_R2, vec_R3, alphas, show=False, save=True):
 
     """
     Description: plot recall
@@ -37,10 +37,13 @@ def plot_recall(vec_R1, vec_R2, vec_R3, alphas):
     blue_patch = mpatches.Patch(color='blue', label='fall')
     green_patch = mpatches.Patch(color='green', label='traffic')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    if show:
+        plt.show()
+    if save:
+        plt.savefig('recall.png')
 
 
-def plot_precision(vec_P1, vec_P2, vec_P3, alphas):
+def plot_precision(vec_P1, vec_P2, vec_P3, alphas, show=False, save=True):
 
     """
     Description: plot precision
@@ -61,10 +64,13 @@ def plot_precision(vec_P1, vec_P2, vec_P3, alphas):
     blue_patch = mpatches.Patch(color='blue', label='fall')
     green_patch = mpatches.Patch(color='green', label='traffic')
     plt.legend(handles=[red_patch, blue_patch, green_patch])
-    plt.show()
+    if show:
+        plt.show()
+    if save:
+        plt.savefig('precision.png')
 
 
-def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
+def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name, show=False, save=True):
 
     """
     Description: plot graph
@@ -87,8 +93,10 @@ def plot_graph_FP_FN_TP_TN(FP, FN, TP, TN, alphas, name):
     green_patch = mpatches.Patch(color='green', label='TP')
     orange_patch = mpatches.Patch(color='orange', label='TN')
     plt.legend(handles=[red_patch, blue_patch, green_patch, orange_patch])
-    plt.show()
-
+    if show:
+        plt.show()
+    if save:
+        plt.savefig('metrics.png')
 
 def init_vectors():
 
