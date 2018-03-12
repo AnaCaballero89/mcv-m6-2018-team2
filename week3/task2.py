@@ -33,8 +33,7 @@ last_frames = [1349,1559,1049]
 colorSpaces=['YCrCb', 'YCrCb', 'RGB']
 
 # Thresholds on gaussian for each experiment:
-alphas = [0.5, 1, 0.5]
-
+alphas = np.arange(0,5,0.5)
 dataset = [0, 1, 2]
 # Connectivity to fill holes [4, 8]
 connectivity = '4'
@@ -42,14 +41,14 @@ connectivity = '4'
 minAreaPixels = [10, 20, 40, 60, 80, 100, 120, 140, 160]
 
 # Define accumulators
-FP = np.zeros((3,len(minAreaPixels)), np.int)
-FN = np.zeros((3,len(minAreaPixels)), np.int)
-TP = np.zeros((3,len(minAreaPixels)), np.int)
-TN = np.zeros((3,len(minAreaPixels)), np.int)
-P = np.zeros((3,len(minAreaPixels)), np.float)
-R = np.zeros((3,len(minAreaPixels)), np.float)
-F1 = np.zeros((3,len(minAreaPixels)), np.float)
-AUC = np.zeros((3,len(minAreaPixels)-1), np.float)
+FP = np.zeros((3,len(alphas)), np.int)
+FN = np.zeros((3,len(alphas)), np.int)
+TP = np.zeros((3,len(alphas)), np.int)
+TN = np.zeros((3,len(alphas)), np.int)
+P = np.zeros((3,len(alphas)), np.float)
+R = np.zeros((3,len(alphas)), np.float)
+F1 = np.zeros((3,len(alphas)), np.float)
+AUC = np.zeros((3,len(minAreaPixels)), np.float)
 
 if __name__ == "__main__":
 
@@ -57,38 +56,24 @@ if __name__ == "__main__":
     # Post process with hole filling
     # Try different connectivities: 4 and 8
     # Report with AUC & gain for each sequences.
-    # Provide qualitative interpretation...
+    # Provide qualitative interpretation..
     print("Evaluating model using {} pixels as min area".format(minAreaPixels))
     for cI, colorSpace in enumerate(colorSpaces):
-            print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"...")
-            alpha = alphas[cI]
-            for aI in range(len(minAreaPixels)):
-                minAreaP=minAreaPixels[aI]
+        print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"...")
+        alpha = alphas[cI]
+        for areaI in range(len(minAreaPixels)):
+            for aI, alpha in enumerate(alphas):
+                minAreaP=minAreaPixels[areaI]
                 mean_matrix, std_matrix = training_color(path_tests[dataset[cI]], first_frames[dataset[cI]], midle_frames[dataset[cI]], alpha, colorSpace);
                 FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP)
-                print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with minArea: "+str(minAreaP))
-                try:
-                    AUC[dataset[cI], aI-1]=metrics.auc(R[dataset[cI], 0:aI+1], P[dataset[cI], 0:aI+1])
-                except ValueError:
-                    pass
-            print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset[cI],:],P[dataset[cI],:]))+"\n")
+                print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
 
-    plt.clf()
-    for i in np.arange(P.shape[0]):
-        plt.plot(minAreaPixels,F1[i,:],label='F1-Dataset'+str(i)+'_'+colorSpaces[i])
-    plt.xlabel('minArea')
-    plt.legend()
-    plt.savefig('f1_minArea.png')
-    plt.clf()
-    for i in np.arange(P.shape[0]):
-        plt.plot(R[i,:],P[i,:],label='Dataset'+str(i)+'_'+colorSpaces[i])
-    plt.xlabel('Recall')
-    plt.ylabel('Precision')
-    #plt.legend()
-    plt.savefig('prec_rec_minArea.png')
+            AUC[dataset[cI], areaI]=metrics.auc(R[dataset[cI], :], P[dataset[cI], :])
+            print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" alpha: "+str(alpha)+" min_area: "+str(minAreaP)+"... done. AUC: "+str(AUC[dataset[cI], areaI])+"\n")
+
 
     for i in np.arange(P.shape[0]):
-        plt.plot(minAreaPixels[1:],AUC[i,:],label='Dataset'+str(i)+'_'+colorSpaces[i])
+        plt.plot(minAreaPixels, AUC[i,:],label='Dataset'+str(i)+'_'+colorSpaces[i])
     plt.xlabel('minArea')
     plt.ylabel('Precision')
     #plt.legend()
