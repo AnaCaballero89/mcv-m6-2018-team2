@@ -61,7 +61,6 @@ if __name__ == "__main__":
     print("Evaluating model using {} pixels as min area".format(minAreaPixels))
     for cI, colorSpace in enumerate(colorSpaces):
             print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"...")
-            AUC = []
             alpha = alphas[cI]
             for aI in range(len(minAreaPixels)):
                 minAreaP=minAreaPixels[aI]
@@ -69,7 +68,7 @@ if __name__ == "__main__":
                 FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI,cI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP)
                 print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
                 try:
-                    AUC.append(metrics.auc(R[dataset[cI], 0:aI+1]))
+                    AUC[dataset[cI], aI-1]=metrics.auc(R[dataset[cI], 0:aI+1])
                 except ValueError:
                     pass
             print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset[cI],:],P[dataset[cI],:]))+"\n")
