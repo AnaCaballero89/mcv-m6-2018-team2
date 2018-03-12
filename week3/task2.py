@@ -65,10 +65,10 @@ if __name__ == "__main__":
             for aI in range(len(minAreaPixels)):
                 minAreaP=minAreaPixels[aI]
                 mean_matrix, std_matrix = training_color(path_tests[dataset[cI]], first_frames[dataset[cI]], midle_frames[dataset[cI]], alpha, colorSpace);
-                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI,cI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP)
-                print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
+                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP)
+                print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with minArea: "+str(minAreaP))
                 try:
-                    AUC[dataset[cI], aI-1]=metrics.auc(R[dataset[cI], 0:aI+1])
+                    AUC[dataset[cI], aI-1]=metrics.auc(R[dataset[cI], 0:aI+1], P[dataset[cI], 0:aI+1])
                 except ValueError:
                     pass
             print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset[cI],:],P[dataset[cI],:]))+"\n")
@@ -78,20 +78,18 @@ if __name__ == "__main__":
         plt.plot(minAreaPixels,F1[i,:],label='F1-Dataset'+str(i)+'_'+colorSpaces[i])
     plt.xlabel('minArea')
     plt.legend()
-    plt.savefig('f1.png')
+    plt.savefig('f1_minArea.png')
     plt.clf()
     for i in np.arange(P.shape[0]):
         plt.plot(R[i,:],P[i,:],label='Dataset'+str(i)+'_'+colorSpaces[i])
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     #plt.legend()
-    plt.savefig('prec_rec.png')
+    plt.savefig('prec_rec_minArea.png')
 
     for i in np.arange(P.shape[0]):
         plt.plot(minAreaPixels[1:],AUC[i,:],label='Dataset'+str(i)+'_'+colorSpaces[i])
     plt.xlabel('minArea')
     plt.ylabel('Precision')
     #plt.legend()
-    plt.savefig('aucvsP.png')
-
-
+plt.savefig('aucvsPminArea.png')
