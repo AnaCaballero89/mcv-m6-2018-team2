@@ -40,6 +40,12 @@ connectivity = '4'
 # Pixels of area filltering
 minAreaPixels = [10, 20, 40, 60, 80, 100, 120, 140, 160]
 
+
+#Define the morphology
+ac_morphology=0; # 1 = apply morphology ; 0 = not to apply morphology
+SE1size=5;
+SE2size=9;
+
 # Define accumulators
 FP = np.zeros((3,len(alphas)), np.int)
 FN = np.zeros((3,len(alphas)), np.int)
@@ -65,7 +71,7 @@ if __name__ == "__main__":
             for aI, alpha in enumerate(alphas):
                 minAreaP=minAreaPixels[areaI]
                 mean_matrix, std_matrix = training_color(path_tests[dataset[cI]], first_frames[dataset[cI]], midle_frames[dataset[cI]], alpha, colorSpace);
-                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP)
+                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaP, ac_morphology, SE1size, SE2size)
                 print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
 
             AUC[dataset[cI], areaI]=metrics.auc(R[dataset[cI], :], P[dataset[cI], :])
