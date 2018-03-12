@@ -42,7 +42,7 @@ connectivity = '4'
 minAreaPixels = 0
 
 #Define the morphology
-ac_morphology=1; # 1 = apply morphology ; 0 = not to apply morphology
+ac_morphology=0; # 1 = apply morphology ; 0 = not to apply morphology
 SE1size=5;
 SE2size=9;
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             for aI in range(len(alphas)):
                 alpha=alphas[aI]
                 mean_matrix, std_matrix = training_color(path_tests[dataset[cI]], first_frames[dataset[cI]], midle_frames[dataset[cI]], alpha, colorSpace);
-                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaPixels)
+                FP[dataset[cI],aI], FN[dataset[cI],aI], TP[dataset[cI],aI], TN[dataset[cI],aI], P[dataset[cI],aI], R[dataset[cI],aI], F1[dataset[cI],aI] = gaussian_color(path_tests[dataset[cI]], path_gts[dataset[cI]], midle_frames[dataset[cI]]+1, last_frames[dataset[cI]], mean_matrix, std_matrix, alpha, colorSpace,connectivity, minAreaPixels, ac_morphology, SE1size, SE2size)
                 print("Computed gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+" with alpha: "+str(alpha))
             print("Starting gaussian modelling dataset num: "+str(dataset[cI])+" color space: "+colorSpace+"... done. AUC: "+str(metrics.auc(R[dataset[cI],:],P[dataset[cI],:]))+"\n")
 
