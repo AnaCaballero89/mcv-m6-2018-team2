@@ -5,7 +5,7 @@ __license__ = "M6 Video Analysis"
 # Import libraries
 import os
 import cv2
-
+import numpy as np
 
 def remove_dots(img, se_size):
 
@@ -17,7 +17,7 @@ def remove_dots(img, se_size):
     """
 
     # Create kernel as ellipse
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (filter_size, se_size))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (se_size, se_size))
     # Apply opening, obtained by the erosion of an image followed by a dilation
     img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
     return img
@@ -56,4 +56,19 @@ def remove_horizontal_lines(img, se_size):
     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
     return img
 
+
+
+def dilation(img, se_size):
+
+
+    kernel = np.ones((se_size,se_size),np.uint8)
+    img = cv2.dilate(img.astype(np.float32), kernel, iterations=1)
+    return img
+
+def erosion(img, se_size):
+
+
+    kernel = np.ones((se_size,se_size),np.uint8)
+    img = cv2.erode(img.astype(np.float32), kernel, iterations=1)
+    return img
 

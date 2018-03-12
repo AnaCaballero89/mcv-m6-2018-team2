@@ -36,10 +36,15 @@ colorSpaces=['YCrCb', 'YCrCb', 'YCrCb']
 alphas = np.arange(0,5,0.5)
 dataset = [0, 1, 2]
 # Connectivity to fill holes [4, 8]
-connectivity = '8'
+connectivity = '4'
 
 # Pixels of area filltering   
 minAreaPixels = 0
+
+#Define the morphology
+ac_morphology=1; # 1 = apply morphology ; 0 = not to apply morphology
+SE1size=5;
+SE2size=9;
 
 # Define accumulators
 FP = np.zeros((3,len(alphas)), np.int)
