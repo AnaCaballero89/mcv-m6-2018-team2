@@ -20,3 +20,6 @@ To run each experiment type:
     python taskX.py 
   
 where X is the task id.
+
+## Week3
+See README in week 3
