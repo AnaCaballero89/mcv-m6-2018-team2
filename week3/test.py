@@ -29,11 +29,15 @@ colorSpaces=['YCrCb', 'YCrCb', 'RGB']
 alpha=0.5
 connectivity = '4'
 minAreaP = 0
+#Define the morphology
+ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+SE1size=11
+SE2size=9
 print 'Starting...'
 mean_matrix, std_matrix = training_color(path_tests[num_dataset], first_frames[num_dataset], middle_frames[num_dataset],
                                          alpha, 'YCrCb')
 FP, FN, TP, TN, P, R, F1 = gaussian_color(path_tests[num_dataset], path_gts[num_dataset],
                                                            middle_frames[num_dataset] + 1, last_frames[num_dataset],
                                                            mean_matrix, std_matrix, alpha, 'YCrCb', connectivity,
-                                                           minAreaP)
+                                                           minAreaP, ac_morphology, SE1size, SE2size)
 print 'Finished!!!'
