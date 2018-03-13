@@ -125,22 +125,29 @@ def training_color(path_test, first_frame, last_frame, alpha, colorSpace):
             out.write(frame)
 
             if shadow_removal == 1:
-                shadow_mask = hsv_shadow_remove(cv2.imread(path_test + filename), frame)
+                shadow_mask = hsv_shadow_remove(cv2.imread(path_test + filename), mean_matrix)
                 # Convert Boolean to 0, 1
-                shadow_mask = 1*shadow_mask
+                shadow_mask = 1 * shadow_mask
 
                 not_mask = np.logical_not(shadow_mask)
-                foreground = np.logical_not(background_mask)
 
-                foreground_noshadow = np.logical_and(foreground, not_mask)
-                background_noshadow = np.logical_not(foreground_noshadow)
-
-                background_noshadow = background.astype(int)
+                background_noshadow = np.logical_and(not_mask, background_mask)
+                background_noshadow = background_noshadow.astype(int)
                 # Replace 1 by 255
                 background_noshadow[background_noshadow == 1] = 255
                 # Scales, calculates absolute values, and converts the result to 8-bit
                 background_noshadow = cv2.convertScaleAbs(background_noshadow)
+
                 background_frame_noshadow = cv2.cvtColor(background_noshadow, cv2.COLOR_GRAY2RGB)
+
+                shadow_mask = shadow_mask.astype(int)
+                shadow_mask[shadow_mask == 1] = 255
+                shadow_mask = cv2.convertScaleAbs(shadow_mask)
+                shadow_mask = cv2.cvtColor(shadow_mask, cv2.COLOR_GRAY2RGB)
+                out_noshadow.write(shadow_mask)
+
+                # out_noshadow.write(background_frame_noshadow)
+                background = background_noshadow
                 out_noshadow.write(background_frame_noshadow)
 
 

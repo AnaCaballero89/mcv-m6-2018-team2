@@ -11,16 +11,16 @@ from util import *
 from sklearn import metrics
 
 # Highway sequences configuration, range 1050 - 1350
-highway_path_in = "/imatge/froldan/work/highway/input/"
-highway_path_gt = "/imatge/froldan/work/highway/groundtruth/"
+highway_path_in = "./highway/input/"
+highway_path_gt = "./highway/groundtruth/"
 
 # Fall sequences configuration, range 1460 - 1560
-fall_path_in = "/imatge/froldan/work/fall/input/"
-fall_path_gt = "/imatge/froldan/work/fall/groundtruth/"
+fall_path_in = "./fall/input/"
+fall_path_gt = "./fall/groundtruth/"
 
 # Traffic sequences configuration, range 950 - 1050
-traffic_path_in = "/imatge/froldan/work/traffic/input/"
-traffic_path_gt = "/imatge/froldan/work/traffic/groundtruth/"
+traffic_path_in = "./traffic/input/"
+traffic_path_gt = "./traffic/groundtruth/"
 
 # Group sequences
 path_tests = [highway_path_in,fall_path_in,traffic_path_in]
@@ -42,9 +42,9 @@ minAreaPixels = [10, 20, 40, 60, 80, 100, 120, 140, 160]
 
 
 #Define the morphology
-ac_morphology=0; # 1 = apply morphology ; 0 = not to apply morphology
-SE1size=5;
-SE2size=9;
+ac_morphology=1; # 1 = apply morphology ; 0 = not to apply morphology
+SE1size=9;
+SE2size=11;
 
 # Define accumulators
 FP = np.zeros((3,len(alphas)), np.int)

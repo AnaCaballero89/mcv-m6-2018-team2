@@ -10,8 +10,8 @@ def hsv_shadow_remove(frame_rgb, background_rgb):
     #CHANGE THE INITIALIZATION
     foreground_without_shadows = []
 
-    hsv_frame = cv2.cvtColor(frame_rgb, cv2.COLOR_BGR2HSV)
-    hsv_background = cv2.cvtColor(background_rgb, cv2.COLOR_BGR2HSV)
+    hsv_frame = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2HSV)
+    hsv_background = cv2.cvtColor(background_rgb, cv2.COLOR_RGB2HSV)
 
     #Conditions to fulfill
     #Pixel is considered shadow if it fulfills these 3 conditions

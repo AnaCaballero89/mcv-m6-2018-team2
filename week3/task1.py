@@ -33,8 +33,8 @@ last_frames = [1349,1559,1049]
 colorSpaces=['YCrCb', 'YCrCb', 'YCrCb']
 
 # Threshold on gaussian
-alphas = np.arange(0,3,0.5)
-#alphas = [2, 3]
+alphas = np.arange(0,5,0.5)
+#alphas = [0.5]
 dataset = [0, 1, 2]
 # Connectivity to fill holes [4, 8]
 connectivity = '4'
