@@ -8,8 +8,8 @@ Tasks:
   - [x] Task 2.2: Estimate the best P
 - [x] Task 3: Aditional morphological operations
 - [x] Task 4: Shadow removal
-- [ ] Task 5.1: Update Precision-Recall(PR) Curve
-- [ ] Task 5.2: Update Area Under the Curve (AUC)
+- [x] Task 5.1: Update Precision-Recall(PR) Curve
+- [x] Task 5.2: Update Area Under the Curve (AUC)
 
 To run each experiment type:
 
@@ -18,8 +18,8 @@ To run each experiment type:
 where X is the task id.
 
 
-To run task1 or task2 with shadow removal run as previously but modify this variable in :
+To run task1 or task2 with shadow removal run as previously but set to one this variable in :
 
-    shadow_removal 
+    shadow_removal = 1
   
 In gaussian_color.py and train_color.py
