@@ -3,7 +3,7 @@ from train_color import *
 from util import *
 from sklearn import metrics
 """
-THIS SCRIPT ONLY HANDLES FROM TASK1 AND TASK2. ADD MORPHOLOGY OPTIONS TO BE SUPPORT CURRENT VERSION.
+THIS SCRIPT ONLY HANDLES FROM TASK1 AND TASK2. ADD MORPHOLOGY OPTIONS TO SUPPORT CURRENT VERSION.
 """
 # Highway sequences configuration, range 1050 - 1350
 highway_path_in = "./highway/input/"
