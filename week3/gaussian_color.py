@@ -6,7 +6,6 @@ __license__ = "M6 Video Analysis"
 import os
 import math
 import cv2
-import pymorph as pym
 import numpy as np
 from scipy import ndimage
 from evaluate import *
@@ -16,6 +15,8 @@ from PIL import Image
 from skimage.measure import label
 from skimage.measure import regionprops
 from util import preprocess_pred_gt
+from morphology import dilation, remove_dots, erosion
+from hsv_shadow_remove import hsv_shadow_remove
 
 
 # Define colors spaces to transform frames
@@ -34,6 +35,7 @@ HARD_SHADOW = 50
 OUTSIDE_REGION = 85
 UNKNOW_MOTION = 170
 MOTION = 255
+shadow_removal = 1
 
 
 def get_accumulator(path_test):
@@ -50,11 +52,11 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "/imatge/froldan/work/highway/input/":
+    if path_test == "./highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "/imatge/froldan/work/fall/input/":
+    if path_test == "./fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "/imatge/froldan/work/traffic/input/":
+    if path_test == "./traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator
@@ -83,6 +85,7 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter(video_path+"gaussian_color_"+str(path_test.split("/")[1])+"_connectivity_"+str(connectivity)+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
+    out_noshadow = cv2.VideoWriter(video_path + "shadowremoval_difference" +str(path_test.split("/")[1])+"_connectivity_"+str(connectivity)+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Define structuring element according to connectivity
     structuring_element = [[0,0,0],[0,0,0],[0,0,0]]
@@ -105,6 +108,7 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
                 frame = cv2.cvtColor(frame, colorSpaceConversion[colorSpace])
             # Compute pixels that belongs to background
             background = np.prod(abs(frame - mu_matrix) >= alpha*(sigma_matrix+2),axis=2)
+            background_mask = background ##ADDED AUX VARIABLE
             # Convert bool to int values
             background = background.astype(int)
             # Replace 1 by 255
@@ -115,21 +119,44 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
             # Read groundtruth image
             gt = cv2.imread(path_gt+"gt"+filename[2:8]+".png", 0)
 
+            # Shadow removal
+            if shadow_removal == 1:
+                shadow_mask = hsv_shadow_remove(cv2.imread(path_test + filename), frame)
+                # Convert Boolean to 0, 1
+                shadow_mask = 1*shadow_mask
+
+                not_mask = np.logical_not(shadow_mask)
+                foreground = np.logical_not(background_mask)
+
+                foreground_noshadow = np.logical_and(foreground, not_mask)
+                background_noshadow = np.logical_not(foreground_noshadow)
+
+                background_noshadow = background.astype(int)
+                # Replace 1 by 255
+                background_noshadow[background_noshadow == 1] = 255
+                # Scales, calculates absolute values, and converts the result to 8-bit
+                background_noshadow = cv2.convertScaleAbs(background_noshadow)
+
+                background_frame_noshadow = cv2.cvtColor(background_noshadow, cv2.COLOR_GRAY2RGB)
+                test = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB) - background_frame_noshadow
+                out_noshadow.write(test)
+                background = background_noshadow
+
             # Hole filling
-            background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)         
-	    if ac_morphology==1:
+            background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)
+            if ac_morphology==1:
                 background = dilation(background,SE1size)
                 background = ndimage.binary_fill_holes(background, structure=structuring_element).astype(int)
                 background = erosion(background,SE1size)
                 background = remove_dots(background,SE2size)
-		
+
             # Replace 1 by 255
             background[background == 1] = 255
             # Scales, calculates absolute values, and converts the result to 8-bit
             background = cv2.convertScaleAbs(background)
-	
+
             # Area filltering, label background regions
-            label_image = label(background)		
+            label_image = label(background)
             # Measure properties of labeled background regions
             if areaPixels > 0:
                 for region in regionprops(label_image):
@@ -150,7 +177,7 @@ def gaussian_color(path_test, path_gt, first_frame, last_frame, mu_matrix, sigma
 
             # Write frame into video
             video_frame = cv2.cvtColor(background, cv2.COLOR_GRAY2RGB)
-            out.write(video_frame)	
+            out.write(video_frame)
 
     # Compute metrics
     print(" AccTP: {}  AccFP: {}  AccFN: {}".format(AccTP, AccFP, AccFN))

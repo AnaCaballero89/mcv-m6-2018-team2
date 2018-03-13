@@ -11,16 +11,16 @@ from util import *
 from sklearn import metrics
 
 # Highway sequences configuration, range 1050 - 1350
-highway_path_in = "/imatge/froldan/work/highway/input/"
-highway_path_gt = "/imatge/froldan/work/highway/groundtruth/"
+highway_path_in = "./highway/input/"
+highway_path_gt = "./highway/groundtruth/"
 
 # Fall sequences configuration, range 1460 - 1560
-fall_path_in = "/imatge/froldan/work/fall/input/"
-fall_path_gt = "/imatge/froldan/work/fall/groundtruth/"
+fall_path_in = "./fall/input/"
+fall_path_gt = "./fall/groundtruth/"
 
 # Traffic sequences configuration, range 950 - 1050
-traffic_path_in = "/imatge/froldan/work/traffic/input/"
-traffic_path_gt = "/imatge/froldan/work/traffic/groundtruth/"
+traffic_path_in = "./traffic/input/"
+traffic_path_gt = "./traffic/groundtruth/"
 
 # Group sequences 
 path_tests = [highway_path_in,fall_path_in,traffic_path_in]
@@ -33,7 +33,8 @@ last_frames = [1349,1559,1049]
 colorSpaces=['YCrCb', 'YCrCb', 'YCrCb']
 
 # Threshold on gaussian
-alphas = np.arange(0,5,0.5)
+alphas = np.arange(0,3,0.5)
+#alphas = [2, 3]
 dataset = [0, 1, 2]
 # Connectivity to fill holes [4, 8]
 connectivity = '4'
@@ -42,7 +43,7 @@ connectivity = '4'
 minAreaPixels = 0
 
 #Define the morphology
-ac_morphology=0; # 1 = apply morphology ; 0 = not to apply morphology
+ac_morphology=1; # 1 = apply morphology ; 0 = not to apply morphology
 SE1size=5;
 SE2size=9;
 

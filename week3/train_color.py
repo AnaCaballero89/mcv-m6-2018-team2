@@ -7,12 +7,15 @@ import os
 import math
 import cv2
 import numpy as np
+from hsv_shadow_remove import hsv_shadow_remove
+from scipy.misc import imsave
 
 # Define colors spaces to tranform frames
 colorSpaceConversion={}
 colorSpaceConversion['YCrCb'] = cv2.COLOR_BGR2YCR_CB
 colorSpaceConversion['HSV']   = cv2.COLOR_BGR2HSV
 colorSpaceConversion['gray'] = cv2.COLOR_BGR2GRAY
+shadow_removal = 1
 
 # Path to save images and videos
 images_path = "std-mean-images/"
@@ -33,11 +36,11 @@ def get_accumulator_color(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "/imatge/froldan/work/highway/input/":
+    if path_test == "./highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
-    if path_test == "/imatge/froldan/work/fall/input/":
+    if path_test == "./fall/input/":
         accumulator = np.zeros((480,720,50), np.float32)
-    if path_test == "/imatge/froldan/work/traffic/input/":
+    if path_test == "./traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
 
     return accumulator
@@ -93,7 +96,8 @@ def training_color(path_test, first_frame, last_frame, alpha, colorSpace):
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter(video_path+"non-adaptive_"+str(path_test.split("/")[1])+".avi", fourcc, 60, (accumulator0.shape[1], accumulator0.shape[0]))
-
+    out_noshadow = cv2.VideoWriter(video_path + "shadowremoval_" + str(path_test.split("/")[1]) + ".avi", fourcc, 60,
+                          (accumulator0.shape[1], accumulator0.shape[0]))
     # Read sequence of images sorted to write video
     for filename in sorted(os.listdir(path_test)):
  
@@ -108,6 +112,7 @@ def training_color(path_test, first_frame, last_frame, alpha, colorSpace):
 
             # Check pixels that belongs to background
             background = np.prod(abs(frame - mean_matrix) >= alpha*(std_matrix+2),axis=2)
+            background_mask = background
             # Convert bool to int values
             background = background.astype(int)
             # Replace 1 by 255
@@ -118,6 +123,26 @@ def training_color(path_test, first_frame, last_frame, alpha, colorSpace):
             # Write frame into video
             frame = cv2.cvtColor(background,cv2.COLOR_GRAY2RGB)
             out.write(frame)
+
+            if shadow_removal == 1:
+                shadow_mask = hsv_shadow_remove(cv2.imread(path_test + filename), frame)
+                # Convert Boolean to 0, 1
+                shadow_mask = 1*shadow_mask
+
+                not_mask = np.logical_not(shadow_mask)
+                foreground = np.logical_not(background_mask)
+
+                foreground_noshadow = np.logical_and(foreground, not_mask)
+                background_noshadow = np.logical_not(foreground_noshadow)
+
+                background_noshadow = background.astype(int)
+                # Replace 1 by 255
+                background_noshadow[background_noshadow == 1] = 255
+                # Scales, calculates absolute values, and converts the result to 8-bit
+                background_noshadow = cv2.convertScaleAbs(background_noshadow)
+                background_frame_noshadow = cv2.cvtColor(background_noshadow, cv2.COLOR_GRAY2RGB)
+                out_noshadow.write(background_frame_noshadow)
+
 
     return mean_matrix, std_matrix
    
