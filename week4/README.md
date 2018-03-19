@@ -15,10 +15,3 @@ To run each experiment type:
     python taskX.py 
   
 where X is the task id.
-
-
-To run task1 or task2 with shadow removal run as previously but set to one this variable in :
-
-    shadow_removal = 1
-  
-In gaussian_color.py and train_color.py
