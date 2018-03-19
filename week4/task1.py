@@ -8,11 +8,16 @@ import sys
 import cv2
 import numpy as np
 from block_matching import *
-import matplotlib.pyplot as plt
+from util import *
 
 # Sequences optical flow
 training_path = "dataset/testing/"
 testing_path = "dataset/training/"
+# Groundtruth of non-occulded areas
+gt_noc_path = "dataset/gt/flow_noc"
+# Grountruth of occulsion regions
+gt_occ_path = "dataset/gt/flow_occ"
+
 
 if __name__ == "__main__":
    
@@ -43,11 +48,7 @@ if __name__ == "__main__":
          frame_1 = np.array(frame_1[:,1:], dtype='float32')
          frame_2 = np.array(frame_2[:,1:], dtype='float32')
 
-         # Plot motion vector field
-         plt.figure()
-         plt.title('Motion vector field with arrows')
-         Q = plt.quiver(frame_1, frame_2, motion_x, motion_y, units='width')
-         qk = plt.quiverkey(Q, 0.9, 0.9, 1, r'', labelpos='E', coordinates='figure')
-         plt.show()
+         # Plot motion 
+         plot_motion(frame_1, frame_2, motion_x, motion_y)
 
 
