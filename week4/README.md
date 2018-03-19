@@ -6,7 +6,7 @@ Tasks:
   - [x] Task 1.1: Optical Flow with Block Matching
   - [ ] Task 1.2: Block Matching vs Other Techniques
 - [ ] Task 2: Video stabilization
-  - [x] Task 2.1: Optical Flow with Block Matching
+  - [ ] Task 2.1: Optical Flow with Block Matching
   - [ ] Task 2.2: Block Matching vs Other Techniques
   - [ ] Task 2.3: Stabilize your own video
 
