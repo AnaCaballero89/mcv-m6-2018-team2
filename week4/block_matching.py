@@ -8,33 +8,8 @@ import sys
 import cv2
 import numpy as np
 
-# Block size (N)
-# Large enough to have statistically relevant data 
-# Small enough to represent part of an object under translation. 
-# Typically 16x16 pixels.
-N = 16
 
-# Search area (P)
-# It is related to the range of expected movement:
-# P pixels in every direction: (2P+N)x(2P+N) pixels. 
-# Typically P = N.
-P = N
-
-# Quantization step (Q)
-# Related to the accuracy of the estimated motion.
-# Typically, 1 pixel but it can go down to 1/4 of pixel
-# Need of interpolation in typically case
-Q = 0
-
-# Motion compensation (MC)
-# - Forward motion estimation: all pixels in the past image are 
-# associated to a pixel in the current image
-# - Backward motion estimation: All pixels in the current image are 
-# associated to a pixel in the past image
-MC = 'backward'
-
-
-def reshape_motion(motion):
+def reshape_motion(motion, N):
 
     """
     Description: reshape motion matrix
@@ -53,7 +28,7 @@ def reshape_motion(motion):
     return new_motion
 
 
-def compute_motion(region, block):
+def compute_motion(region, block, N, P):
 
     """
     Description: compute motion from region depending
@@ -87,12 +62,12 @@ def compute_motion(region, block):
     return x_motion, y_motion
 
 
-def block_matching(frame_1, frame_2):
+def block_matching(frame_1, frame_2, N, P, MC, Q):
 
     """
     Description: block matching
     Input: frame_1, frame_2
-    Output: motion x and motion y
+    Output: motion
     """
 
     # Set motion compensation
@@ -127,20 +102,25 @@ def block_matching(frame_1, frame_2):
             region = img_2_padd[x*N:x*N+N+2*P, y*N:y*N+N+2*P]
 
             # Compute motion
-            x_mot, y_mot = compute_motion(region, block)
+            x_mot, y_mot = compute_motion(region, block, N, P)
             
             # Update motion matrices
             motion_x[x, y] = x_mot
             motion_y[x, y] = y_mot
             
     # Cast to float32 type
-    motion_x = motion_x.astype('float32')
-    motion_y = motion_y.astype('float32')
+    motion_x = motion_x.astype('float64')
+    motion_y = motion_y.astype('float64')
 
     # Reshape motion x and y
-    motion_x = reshape_motion(motion_x)
-    motion_y = reshape_motion(motion_y)
+    motion_x = reshape_motion(motion_x, N)
+    motion_y = reshape_motion(motion_y, N)
 
-    return motion_x, motion_y
+    # Group motion matrix x and y into one
+    motion = np.zeros([motion_x.shape[0], motion_x.shape[1], 2])
+    motion[:, :, 0] = motion_x
+    motion[:, :, 1] = motion_y
+
+    return motion
 
 
