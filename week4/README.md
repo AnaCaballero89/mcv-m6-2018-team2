@@ -4,7 +4,7 @@ Tasks:
 
 - [x] Task 1: Optical flow
   - [x] Task 1.1: Optical Flow with Block Matching
-  - [ ] Task 1.2: Block Matching vs Other Techniques
+  - [x] Task 1.2: Block Matching vs Other Techniques
 - [ ] Task 2: Video stabilization
   - [ ] Task 2.1: Optical Flow with Block Matching
   - [ ] Task 2.2: Block Matching vs Other Techniques
@@ -15,3 +15,7 @@ To run each experiment type:
     python taskX.py 
   
 where X is the task id.
+
+For Task1.2 run the following after setting your input variables:
+
+    python farneback.py 
