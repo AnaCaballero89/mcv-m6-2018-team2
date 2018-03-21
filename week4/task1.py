@@ -12,8 +12,8 @@ from util import *
 from evaluate import *
 
 # Sequences optical flow
-training_path = "dataset/testing/"
-testing_path = "dataset/training/"
+training_path = "dataset/training/"
+testing_path = "dataset/testing/"
 # Groundtruth of non-occulded areas
 gt_noc_path = "dataset/gt/flow_noc/"
 # Grountruth of occulsion regions
