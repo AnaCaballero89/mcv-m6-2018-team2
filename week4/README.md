@@ -1,14 +1,14 @@
-# Week 5 Region tracking and Kalman filter
+# Week 4 Optical flowm, video stabilization
 
 Tasks:
 
-- [ ] Task 1: Vehicle tracker
-  - [ ] Task 1.1: Using Kalman filter
-  - [ ] Task 1.2: Other tools 
-- [ ] Task 2: Speed estimator
-- [ ] Task 3: Final deliverables
-  - [ ] Task 3.1: Technical report
-  - [ ] Task 3.2: Software
+- [x] Task 1: Optical flow
+  - [x] Task 1.1: Optical Flow with Block Matching
+  - [x] Task 1.2: Block Matching vs Other Techniques
+- [ ] Task 2: Video stabilization
+  - [ ] Task 2.1: Optical Flow with Block Matching
+  - [ ] Task 2.2: Block Matching vs Other Techniques
+  - [ ] Task 2.3: Stabilize your own video
 
 To run each experiment type:
 
