@@ -51,8 +51,8 @@ frame_counter = 0
 
 if __name__ == "__main__":
 
-    # W5 T1.2 Tracking with MeanShift prediction
-    # Structure of Kalman filter is used to get new object detections
+    # W5 T1.1 Tracking with Kalman filter using SORT tracker
+    # Use Kalman filter to track each vehicle appearing in the sequence
     # Apply the background substraction work previously done
 
     # Set up configuration
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(video_path+"mean_shift_"+str(path_test.split("/")[2])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
+    out = cv2.VideoWriter(video_path+"kalman_filter_"+str(path_test.split("/")[2])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
     out_bg = cv2.VideoWriter(video_path+"bg_"+str(path_test.split("/")[2])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Read sequence of images sorted
@@ -95,16 +95,16 @@ if __name__ == "__main__":
             # Update tracker motion
             dets = np.array(centroids)
             trackers = tracker_motion.update(dets)
-            save_tracker_positions(trackers)
 
-            # Predict by menashift
-            compute_meanshit(trackers, frame)
-            predict_meanshit(trackers, frame)
+            # Save tracker values
+            save_tracker_positions(trackers)
+            frame = display_motion(frame)
 
             # Show results
             cv2.imshow("background subtraction", background_filtered)
-            cv2.imshow("tracking MEANSHIFT", frame)
-            cv2.waitKey(15)
+            frame = display_detections(frame, background_filtered, minAreaPixels)
+            cv2.imshow("tracking KALMAN FILTER", frame)
+            cv2.waitKey(1)
 
             # Write frame into video
             background_filtered[background_filtered == 1] = 255
