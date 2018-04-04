@@ -23,6 +23,7 @@ from filterpy.kalman import KalmanFilter
 # Path configurations
 highway_path_in = "./dataset/highway/input/"
 traffic_path_in = "./dataset/traffic/input/"
+detrac_path_in = "./dataset/detrac/"
 video_path = "./videos/"
 
 # Connectivity 8 to hole filling
@@ -55,25 +56,21 @@ if __name__ == "__main__":
     # Structure of Kalman filter is used to get new object detections
     # Apply the background substraction work previously done
 
-    # Set up configuration
-    path_test = highway_path_in
-    first_frame = 1050
-    last_frame = 1350
-
-    # path_test = traffic_path_in
-    # first_frame = 950
-    # last_frame = 1050
+    # Choose betwen: highway, traffic or detrac
+    path_test, first_frame, last_frame = setup("detrac")
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     out = cv2.VideoWriter(video_path+"mean_shift_"+str(path_test.split("/")[2])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
-    out_bg = cv2.VideoWriter(video_path+"bg_"+str(path_test.split("/")[2])+".avi", fourcc, 60, (get_accumulator(path_test).shape[1], get_accumulator(path_test).shape[0]))
 
     # Read sequence of images sorted
     for filename in sorted(os.listdir(path_test)):
        
+        # Display current frame
+        print "Processing frame: "+str(filename)
+
         # Check that frame is into range
-        frame_num = int(filename[2:8])
+        frame_num = int(filename[3:8])
         if frame_num >= first_frame and frame_num <= last_frame:
 
             # Read image from groundtruth 
@@ -81,6 +78,7 @@ if __name__ == "__main__":
 
             # Apply background subraction
             background = fgbg.apply(frame)
+            background = cv2.morphologyEx(background, cv2.MORPH_OPEN, kernel)
            
             # Filter detections by area
             background_filtered = area_filtering(background, minAreaPixels)
@@ -102,15 +100,10 @@ if __name__ == "__main__":
             predict_meanshit(trackers, frame)
 
             # Show results
-            cv2.imshow("background subtraction", background_filtered)
             cv2.imshow("tracking MEANSHIFT", frame)
-            cv2.waitKey(15)
+            cv2.waitKey(1)
 
             # Write frame into video
-            background_filtered[background_filtered == 1] = 255
-            background_filtered = cv2.convertScaleAbs(background_filtered)
-            background_filtered = cv2.cvtColor(background_filtered, cv2.COLOR_GRAY2RGB)
-            out_bg.write(background_filtered)
             out.write(np.uint8(frame))
 
             # Update frame_counter

@@ -6,15 +6,76 @@ __license__ = "M6 Video Analysis"
 import os
 import cv2
 import math
+import time
 import numpy as np
 from skimage.measure import label
 from skimage.measure import regionprops
+
+# Path configurations
+highway_path_in = "./dataset/highway/input/"
+traffic_path_in = "./dataset/traffic/input/"
+detrac_path_in = "./dataset/detrac/"
 
 # Dictionary of tracker positions using sort
 tracker_dict = {}
 
 # Dictionray of tracker poistions using meanshift
 tracker_dict_meanshift = {}
+
+# Filter by size
+max_x = 0
+max_y = 0
+min_y = 0
+min_x = 0
+
+
+def setup(name):
+
+    """    
+    Description: set up dataset
+    Input: name
+    Output: path_test, first_frame, last_frame
+    """
+
+    # Initialize variables
+    path_test = "" 
+    first_frame = 0 
+    last_frame = 0
+
+    # Highway configuration
+    if name == "highway":
+        path_test = highway_path_in
+        first_frame = 1050
+        last_frame = 1350
+        global max_x,max_y,min_x,min_y
+        max_x = 500
+        max_y = 500
+        min_y = 25
+        min_x = 25
+
+    # Traffic configuration
+    if name == "traffic":
+        path_test = traffic_path_in
+        first_frame = 950
+        last_frame = 1050
+        global max_x,max_y,min_x,min_y
+        max_x = 200
+        max_y = 150	
+        min_y = 75
+        min_x = 75
+
+    # Detrac configuration
+    if name == "detrac":
+        path_test = detrac_path_in
+        first_frame = 300
+        last_frame = 500
+        global max_x,max_y,min_x,min_y
+        max_x = 200
+        max_y = 200
+        min_y = 50
+        min_x = 50
+   
+    return path_test, first_frame, last_frame
 
 
 def compute_meanshit(trackers, frame):
@@ -41,7 +102,7 @@ def compute_meanshit(trackers, frame):
             h = int(abs(trackers[i][3]-trackers[i][1]))
 
             # Check windows is valid
-            if c>0 and r>0 and w>0 and h>0:
+            if c>0 and r>0 and w>0 and h>0 and h > min_y and w > min_x and h < max_y and w < max_x:
 
                 # Set up the ROI for tracking
                 track_window = (c,r,w,h)
@@ -60,7 +121,6 @@ def compute_meanshit(trackers, frame):
                 vec.append(term_crit)
                 vec.append(roi_hist)
                 tracker_dict_meanshift[key] = vec
-
 
 
 def predict_meanshit(trackers, frame):
@@ -101,7 +161,7 @@ def predict_meanshit(trackers, frame):
             frame = cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0),2)
 
 
-def display_motion(frame):
+def display_motion(frame, trackers):
 
     """
     Description: display motion
@@ -109,12 +169,42 @@ def display_motion(frame):
     Output: none
     """
 
+    # Get actives trackers
+    current_trackers = []      
+    for i in range(len(trackers)):
+         key = int(trackers[i][4])
+         current_trackers.append(key)
+
     # Itearte dictionary of tracker positions
     for key, value in tracker_dict.iteritems():
-        # Itearte vector of positions
-        for i in range(len(value)-1): 
-            # Draw line to display motion
-            cv2.line(frame,value[i],value[i+1],(0,0,255),2)
+
+        # Check if tracker is running
+        if key in current_trackers:
+
+            # Itearte vector of positions
+            for i in range(len(value[0])-1): 
+                # Draw line to display motion
+                cv2.line(frame,value[0][i],value[0][i+1],(0,0,255),2)
+ 
+            # Check if tracker contains at least two timestamps
+            if len(value[1]) > 1:
+
+                # Compute distance travelled with euclidian distance
+                distance_start = value[0][0]
+                distance_end = value[0][len(value[0])-1]
+                distance = math.sqrt(((distance_start[0]-distance_end[0])**2)+((distance_start[1]-distance_end[1])**2))
+
+                # Compute time spent
+                time_start = value[1][1]
+                time_end = value[1][len(value[1])-1]
+                time = time_end - time_start 
+
+                # Compute speed
+                if time > 0 and distance > 0:
+                    speed = int(distance / time)
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    pos = value[0][len(value[0])-1]
+                    cv2.putText(frame,str(speed)+"km/h ",(pos[0]-5,pos[1]-20),font,0.75,(0,255,255),1,cv2.LINE_AA)
 
     return frame
 
@@ -132,7 +222,7 @@ def save_tracker_positions(trackers):
         
         # Get id from tracker
         key = int(trackers[i][4])
-        
+             
         # Get centroid coordinates       
         x = int(trackers[i][0]+((trackers[i][2]-trackers[i][0])/2))
         y = int(trackers[i][1]+((trackers[i][3]-trackers[i][1])/2))
@@ -140,16 +230,33 @@ def save_tracker_positions(trackers):
         # Check if exists tracker in dictionary
         if key in tracker_dict:
             vec = tracker_dict[key]
+            
+            positions = vec[0]
+            positions.append((x,y))
+  
+            timer = vec[1]	
+            timer.append(time.time())
+
+            vec.append(positions)
+            vec.append(timer)
+
             vec.append((x,y))
             tracker_dict[key] = vec
 
         # Insert new key in dictionary
         else:
             vec = []
-            vec.append((x,y))
+            
+            positions = []
+            positions.append((x,y))
+            
+            timer = []
+            timer.append(time.time())
+
+            vec.append(positions)
+            vec.append(timer)
             tracker_dict[key] = vec
         
-
 
 def get_accumulator(path_test):
 
@@ -169,6 +276,8 @@ def get_accumulator(path_test):
         accumulator = np.zeros((240,320,150), np.float32)
     if path_test == "./dataset/traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
+    if path_test == "./dataset/detrac/":
+        accumulator = np.zeros((540,960,50), np.float32)
 
     return accumulator
 
@@ -198,10 +307,11 @@ def get_centroids(foreground, minAreaPixels):
         if region.area > minAreaPixels:
 
             # Get centroid position from region box
-            minr, minc,  maxr, maxc = region.bbox
-            x = minc+((maxc-minc)/2)
-            y = minr+((maxr-minr)/2)
-            centroids.append([minc,minr,maxc,maxr])
+            minr, minc,  maxr, maxc = region.bbox    
+            
+            # Filter by size
+            if (maxr-minr) > min_y and (maxc-minc) > min_x and (maxr-minr) < max_y and (maxc-minc) < max_x:
+               centroids.append([minc,minr,maxc,maxr])
 
     return centroids
 
@@ -229,13 +339,18 @@ def display_detections(frame, foreground, minAreaPixels):
 
             # Get centroid position
             minr, minc,  maxr, maxc = region.bbox
-            x = minc+((maxc-minc)/2)
-            y = minr+((maxr-minr)/2)
 
-            # Print rectangle of bounding box
-            cv2.rectangle(frame, (minc,minr), (maxc,maxr), (0,255,0), 2)
-            # Print centroid of bounding box	
-            cv2.circle(frame, (x, y), 3, (0,0,255), -1)
+            # Filter by size
+            if (maxr-minr) > min_y and (maxc-minc) > min_x and (maxr-minr) < max_y and (maxc-minc) < max_x:            
+
+                # Get x and y coordinates from box
+                x = minc+((maxc-minc)/2)
+                y = minr+((maxr-minr)/2)
+
+                # Print rectangle of bounding box
+                cv2.rectangle(frame, (minc,minr), (maxc,maxr), (0,255,0), 2)
+                # Print centroid of bounding box	
+                cv2.circle(frame, (x, y), 3, (0,0,255), -1)
 
     return frame
 
