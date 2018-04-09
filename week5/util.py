@@ -11,11 +11,6 @@ import numpy as np
 from skimage.measure import label
 from skimage.measure import regionprops
 
-# Path configurations
-highway_path_in = "./dataset/highway/input/"
-traffic_path_in = "./dataset/traffic/input/"
-detrac_path_in = "./dataset/detrac/"
-
 # Dictionary of tracker positions using sort
 tracker_dict = {}
 
@@ -23,59 +18,136 @@ tracker_dict = {}
 tracker_dict_meanshift = {}
 
 # Filter by size
-max_x = 0
-max_y = 0
-min_y = 0
-min_x = 0
+max_x = 10000
+max_y = 10000
+min_y = 2
+min_x = 2
 
 
 def setup(name):
 
-    """    
-    Description: set up dataset
-    Input: name
-    Output: path_test, first_frame, last_frame
-    """
-
-    # Initialize variables
-    path_test = "" 
-    first_frame = 0 
-    last_frame = 0
-
     # Highway configuration
     if name == "highway":
-        path_test = highway_path_in
-        first_frame = 1050
-        last_frame = 1350
-        global max_x,max_y,min_x,min_y
-        max_x = 500
-        max_y = 500
-        min_y = 25
-        min_x = 25
+        path_in="datasets/highway/input/"
+        first_train_frame = 1050
+        last_train_frame = 1199
+        first_test_frame = 1050
+        last_test_frame = 1349
+        im_size=[240,320]
+        alpha = 0.23
+        colorSpace = 'YCrCb'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=11
+        SE2size=9
 
-    # Traffic configuration
+    if name == "fall":
+        path_in="datasets/fall/input/"
+        first_train_frame = 1460
+        last_train_frame = 1509
+        first_test_frame = 1460
+        last_test_frame = 1559
+        im_size=[480,720]
+        alpha = 0.5
+        colorSpace = 'YCrCb'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=9
+
     if name == "traffic":
-        path_test = traffic_path_in
-        first_frame = 950
-        last_frame = 1050
-        global max_x,max_y,min_x,min_y
-        max_x = 200
-        max_y = 150	
-        min_y = 75
-        min_x = 75
+        path_in="datasets/traffic/input/"
+        first_train_frame = 950
+        last_train_frame = 999
+        first_test_frame = 950
+        last_test_frame = 1049
+        im_size=[240,320]
+        alpha = 2
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
 
-    # Detrac configuration
-    if name == "detrac":
-        path_test = detrac_path_in
-        first_frame = 300
-        last_frame = 500
-        global max_x,max_y,min_x,min_y
-        max_x = 200
-        max_y = 200
-        min_y = 50
-        min_x = 50
-   
-    return path_test, first_frame, last_frame
+    if name == "traffic_stabilized":
+        path_in="datasets/traffic/stabilizated_images/"
+        first_train_frame = 0
+        last_train_frame = 49
+        first_test_frame = 0
+        last_test_frame = 99
+        im_size=[240,320]
+        alpha = 1.5
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
+
+    if name == "own1":
+        path_in="datasets/own1/resized/"
+        first_train_frame = 65
+        last_train_frame = 76
+        first_test_frame = 0
+        last_test_frame = 65
+        im_size=[270,480]
+        alpha = 3.2
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
+
+    if name == "own1_stabilized":
+        path_in="datasets/own1/stabilized/"
+        first_train_frame = 65
+        last_train_frame = 76
+        first_test_frame = 0
+        last_test_frame = 65
+        im_size=[270,480]
+        alpha = 1.5
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
+
+    if name == "own2":
+        path_in="datasets/own2/resized/"
+        first_train_frame = 69
+        last_train_frame = 83
+        first_test_frame = 0
+        last_test_frame = 69
+        im_size=[270,480]
+        alpha = 2
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
+
+    if name == "own2_stabilized":
+        path_in="datasets/own2/stabilized/"
+        first_train_frame = 69
+        last_train_frame = 83
+        first_test_frame = 0
+        last_test_frame = 69
+        im_size=[270,480]
+        alpha = 2
+        colorSpace = 'RGB'
+        connectivity = '8'
+        areaPixels = 160
+        ac_morphology=1 # 1 = apply morphology ; 0 = not to apply morphology
+        SE1size=3
+        SE2size=13
+
+    return path_in, first_train_frame, last_train_frame, first_test_frame, last_test_frame, im_size, alpha, colorSpace, connectivity, areaPixels, ac_morphology, SE1size, SE2size
 
 
 def compute_meanshit(trackers, frame):
@@ -204,7 +276,7 @@ def display_motion(frame, trackers):
                     speed = int(distance / time)
                     font = cv2.FONT_HERSHEY_SIMPLEX
                     pos = value[0][len(value[0])-1]
-                    cv2.putText(frame,str(speed)+"km/h ",(pos[0]-5,pos[1]-20),font,0.75,(0,255,255),1,cv2.LINE_AA)
+                    cv2.putText(frame,str(speed)+"pxls/frame ",(pos[0]-5,pos[1]-20),font,0.75,(0,255,255),1,cv2.LINE_AA)
 
     return frame
 
@@ -272,7 +344,7 @@ def get_accumulator(path_test):
     accumulator = np.zeros((0,0), np.float32) 
 
     # Set accumulator depending on dataset choosen
-    if path_test == "./dataset/highway/input/":
+    if path_test == "dataset/highway/input/":
         accumulator = np.zeros((240,320,150), np.float32)
     if path_test == "./dataset/traffic/input/":
         accumulator = np.zeros((240,320,50), np.float32)
@@ -376,5 +448,6 @@ def area_filtering(background, minAreaPixels):
             background_filtered[minr:maxr, minc:maxc] = background[minr:maxr, minc:maxc] 
 
     return background_filtered
+
 
 
