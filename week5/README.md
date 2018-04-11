@@ -8,8 +8,8 @@ Tasks:
     Was ranked the best open source multiple object tracker on the MOT benchmark
   - [x] Task 1.2: Other tools: Meanshift
 - [x] Task 2: Speed estimator
-- [ ] Task 3: Final deliverables
-  - [ ] Task 3.1: Technical report
-  - [ ] Task 3.2: Software
+- [x] Task 3: Final deliverables
+  - [x] Task 3.1: Technical report
+  - [x] Task 3.2: Software
   
   
