@@ -14,6 +14,8 @@ In this project we propose two different methods in order to monitor road traffi
 # Final presentation slides
 The slides for the final presentation can be found [here](https://docs.google.com/presentation/d/16Laa4aFNtYXyBeDqTTXi3pS4N0iIgKwo4eFrPv-wv84/edit?usp=sharing).
 
+# Final report
+The final report document can be found [here](https://www.overleaf.com/read/vhtwtcrbdrcw).
 
 # How to run the code
 ## Week1
