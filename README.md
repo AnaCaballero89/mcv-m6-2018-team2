@@ -18,12 +18,9 @@ The slides for the final presentation can be found [here](https://docs.google.co
 # How to run the code
 ## Week1
 See README in week 1
-## Week2
-To run each experiment type:
 
-    python taskX.py 
-  
-where X is the task id.
+## Week2
+See README in week 2
 
 ## Week3
 See README in week 3
