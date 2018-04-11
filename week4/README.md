@@ -5,10 +5,10 @@ Tasks:
 - [x] Task 1: Optical flow
   - [x] Task 1.1: Optical Flow with Block Matching
   - [x] Task 1.2: Block Matching vs Other Techniques
-- [ ] Task 2: Video stabilization
-  - [ ] Task 2.1: Optical Flow with Block Matching
-  - [ ] Task 2.2: Block Matching vs Other Techniques
-  - [ ] Task 2.3: Stabilize your own video
+- [x] Task 2: Video stabilization
+  - [x] Task 2.1: Optical Flow with Block Matching
+  - [x] Task 2.2: Block Matching vs Other Techniques
+  - [x] Task 2.3: Stabilize your own video
 
 To run each experiment type:
 
